@@ -1,104 +1,88 @@
-import React, { useEffect, useState } from 'react'
-import FullCalendar from '@fullcalendar/react'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
-import interactionPlugin from '@fullcalendar/interaction'
-import { supabase } from '../lib/supabase'
+import React, { useEffect, useState } from 'react';
+import FullCalendar from '@fullcalendar/react';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
+import { useSupabase } from '../lib/supabase';
 
-// Ocultar mensajes de licencia
-const originalWarn = console.warn
-console.warn = (...args) => {
-  if (typeof args[0] === 'string' && args[0].includes('license key')) {
-    return
-  }
-  originalWarn(...args)
+interface CalendarProps {
+  onCeldaClick: (articuloId: number, start: string, end: string) => void;
 }
 
-interface Articulo {
-  id: string
-  nombre: string
-  categoria: string
-  estado: string
-}
-
-interface Reserva {
-  id: string
-  articulo_id: string
-  cliente_nombre: string
-  fecha_inicio: string
-  fecha_fin: string
-}
-
-const Calendar: React.FC = () => {
-  const [articulos, setArticulos] = useState<Articulo[]>([])
-  const [reservas, setReservas] = useState<Reserva[]>([])
-  const [loading, setLoading] = useState(true)
+const Calendar: React.FC<CalendarProps> = ({ onCeldaClick }) => {
+  const { supabase } = useSupabase();
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchArticulos() {
       try {
-        const { data: articulosData } = await supabase.from('articulos').select('*')
-        setArticulos(articulosData || [])
-
-        const { data: reservasData } = await supabase.from('reservas').select('*')
-        setReservas(reservasData || [])
+        const { data, error } = await supabase
+          .from('articulos')
+          .select('*');
+        if (!error) {
+          setEvents(data.map(articulo => ({
+            title: articulo.nombre,
+            start: '2023-10-01T09:00:00',
+            end: '2023-10-01T17:00:00',
+            resourceId: articulo.id
+          })));
+        }
       } catch (error) {
-        console.error('Error:', error)
-      } finally {
-        setLoading(false)
+        console.error('Error fetching articles:', error);
       }
     }
-    fetchData()
-  }, [])
 
-  const events = reservas.map((reserva) => ({
-    id: reserva.id,
-    title: `📌 ${reserva.cliente_nombre}`,
-    start: reserva.fecha_inicio,
-    end: reserva.fecha_fin,
-    resourceId: reserva.articulo_id,
-    backgroundColor: '#ef4444',
-    borderColor: '#dc2626'
-  }))
+    fetchArticulos();
+  }, [supabase]);
 
-  const resources = articulos.map((articulo) => ({
-    id: articulo.id,
-    title: `${articulo.nombre} (${articulo.categoria})`
-  }))
+  useEffect(() => {
+    async function fetchReservas() {
+      try {
+        const { data, error } = await supabase
+          .from('reservas')
+          .select('*');
+        if (!error) {
+          setEvents(prevEvents => prevEvents.map(event => ({
+            ...event,
+            title: `${event.title} - ${data.find(reserva => reserva.articulo_id === event.resourceId)?.estado}`
+          })));
+        }
+      } catch (error) {
+        console.error('Error fetching reservations:', error);
+      }
+    }
 
-  if (loading) {
-    return <div className="p-4 text-center text-gray-600">Cargando calendario...</div>
-  }
+    fetchReservas();
+  }, [supabase]);
 
-  if (articulos.length === 0) {
-    return <div className="p-4 text-center text-gray-500">No hay artículos para mostrar.</div>
-  }
+  const handleDateClick = (info: any) => {
+    onCeldaClick(info.event.extendedProps.resourceId, info.startStr, info.endStr);
+  };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow">
-      <FullCalendar
-        plugins={[dayGridPlugin, resourceTimelinePlugin, interactionPlugin]}
-        initialView="resourceTimelineDay"
-        resources={resources}
-        events={events}
-        headerToolbar={{
-          left: 'prev,next today',
-          center: 'title',
-          right: 'resourceTimelineDay,resourceTimelineWeek'
-        }}
-        resourceAreaWidth="200px"
-        height="auto"
-        selectable={true}
-        select={(info) => {
-          const articuloNombre = info.resource?.title || 'Sin seleccionar'
-          alert(`📅 Nueva reserva\nArtículo: ${articuloNombre}\nDesde: ${info.startStr}\nHasta: ${info.endStr}`)
-        }}
-        eventClick={(info) => {
-          alert(`📌 Reserva: ${info.event.title}\nFecha: ${info.event.startStr}`)
-        }}
-      />
-    </div>
-  )
-}
+    <FullCalendar
+      plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+      initialView="timeGridWeek"
+      events={events}
+      dateClick={handleDateClick}
+      eventContent={(info) => {
+        const reserva = info.event.extendedProps;
+        return (
+          <div>
+            {reserva.title}
+            {reserva.estado && (
+              <span className={`ml-2 px-2 py-1 rounded ${reserva.estado === 'pendiente' ? 'bg-yellow-100' : 
+                reserva.estado === 'confirmada' ? 'bg-green-100' : 
+                reserva.estado === 'cancelada' ? 'bg-red-100' : 
+                reserva.estado === 'completada' ? 'bg-blue-100' : ''}`}>
+                {reserva.estado}
+              </span>
+            )}
+          </div>
+        );
+      }}
+    />
+  );
+};
 
-export default Calendar
+export default Calendar;

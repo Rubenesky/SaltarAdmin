@@ -1,158 +1,93 @@
-import React, { useState } from 'react'
-import Modal from 'react-modal'
-import { supabase } from '../lib/supabase'
-
-// Para que funcione correctamente con React
-Modal.setAppElement('#root')
+import React, { useState } from 'react';
+import { useSupabase } from '../lib/supabase';
 
 interface ReserveModalProps {
-  isOpen: boolean
-  onClose: () => void
-  articuloId: string
-  fechaInicio: string
-  fechaFin: string
-  onReservaCreada: () => void
+  isOpen: boolean;
+  onClose: () => void;
+  articuloId: number;
+  fechaInicio: string;
+  fechaFin: string;
+  onReservaCreada: (reserva: any) => void;
 }
 
-const ReserveModal: React.FC<ReserveModalProps> = ({
-  isOpen,
-  onClose,
-  articuloId,
-  fechaInicio,
-  fechaFin,
-  onReservaCreada
-}) => {
-  const [clienteNombre, setClienteNombre] = useState('')
-  const [clienteTelefono, setClienteTelefono] = useState('')
-  const [clienteEmail, setClienteEmail] = useState('')
-  const [notas, setNotas] = useState('')
-  const [loading, setLoading] = useState(false)
+const ReserveModal: React.FC<ReserveModalProps> = ({ isOpen, onClose, articuloId, fechaInicio, fechaFin, onReservaCreada }) => {
+  const { supabase } = useSupabase();
+  const [nombreCliente, setNombreCliente] = useState('');
+  const [telefono, setTelefono] = useState('');
+  const [email, setEmail] = useState('');
+  const [notas, setNotas] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-
+    e.preventDefault();
     try {
-      const { error } = await supabase.from('reservas').insert([
-        {
-          articulo_id: articuloId,
-          cliente_nombre: clienteNombre,
-          cliente_telefono: clienteTelefono,
-          cliente_email: clienteEmail || null,
-          fecha_inicio: fechaInicio,
-          fecha_fin: fechaFin,
-          estado: 'pendiente',
-          notas: notas || null
-        }
-      ])
-
-      if (error) throw error
-
-      // Limpiar formulario
-      setClienteNombre('')
-      setClienteTelefono('')
-      setClienteEmail('')
-      setNotas('')
-      onReservaCreada()
-      onClose()
+      const { data, error } = await supabase
+        .from('reservas')
+        .insert([{ cliente: nombreCliente, telefono, email, notas, articulo_id: articuloId, fecha_inicio: fechaInicio, fecha_fin: fechaFin, estado: 'pendiente' }]);
+      if (!error) {
+        onReservaCreada(data[0]);
+        onClose();
+      }
     } catch (error) {
-      console.error('Error creando reserva:', error)
-      alert('Error al crear la reserva. Revisa la consola.')
-    } finally {
-      setLoading(false)
+      console.error('Error creating reservation:', error);
     }
-  }
+  };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onRequestClose={onClose}
-      contentLabel="Crear Reserva"
-      className="max-w-md mx-auto mt-20 bg-white rounded-lg shadow-xl p-6"
-      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-start justify-center"
-    >
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">📝 Crear Reserva</h2>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Nombre del cliente *
-          </label>
-          <input
-            type="text"
-            required
-            value={clienteNombre}
-            onChange={(e) => setClienteNombre(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ej: Juan Pérez"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Teléfono *
-          </label>
-          <input
-            type="tel"
-            required
-            value={clienteTelefono}
-            onChange={(e) => setClienteTelefono(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ej: 612345678"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Email (opcional)
-          </label>
-          <input
-            type="email"
-            value={clienteEmail}
-            onChange={(e) => setClienteEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Ej: cliente@email.com"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Notas (opcional)
-          </label>
-          <textarea
-            value={notas}
-            onChange={(e) => setNotas(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-            rows={3}
-            placeholder="Indicaciones especiales..."
-          />
-        </div>
-
-        <div className="text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
-          <p><strong>Artículo:</strong> ID: {articuloId}</p>
-          <p><strong>Desde:</strong> {fechaInicio}</p>
-          <p><strong>Hasta:</strong> {fechaFin}</p>
-        </div>
-
-        <div className="flex gap-3 pt-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
-          >
-            {loading ? 'Guardando...' : '✅ Crear Reserva'}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
+        <h2 className="text-xl font-bold mb-4">Crear Reserva</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="nombreCliente" className="block text-gray-700">Nombre del Cliente:</label>
+            <input
+              type="text"
+              id="nombreCliente"
+              value={nombreCliente}
+              onChange={(e) => setNombreCliente(e.target.value)}
+              required
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="telefono" className="block text-gray-700">Teléfono:</label>
+            <input
+              type="text"
+              id="telefono"
+              value={telefono}
+              onChange={(e) => setTelefono(e.target.value)}
+              required
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-gray-700">Email (opcional):</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="notas" className="block text-gray-700">Notas (opcional):</label>
+            <textarea
+              id="notas"
+              value={notas}
+              onChange={(e) => setNotas(e.target.value)}
+              className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
+            Reservar
           </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition"
-          >
+          <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition ml-2">
             Cancelar
           </button>
-        </div>
-      </form>
-    </Modal>
-  )
-}
+        </form>
+      </div>
+    </div>
+  );
+};
 
-export default ReserveModal
+export default ReserveModal;
