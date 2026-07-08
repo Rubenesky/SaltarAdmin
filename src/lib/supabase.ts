@@ -87,7 +87,7 @@ export const createReserva = async (reserva: {
 }): Promise<Reserva> => {
   const { data, error } = await supabase
     .from('reservas')
-    .insert([{ ...reserva, estado: 'pendiente' }])
+    .insert([{ ...reserva, estado: 'confirmada' }])
     .select()
     .single()
   if (error) throw error

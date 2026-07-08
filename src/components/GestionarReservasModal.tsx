@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { getReservas, hayConflictoReserva, updateReserva, updateReservaEstado } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
-import type { ReservaConArticulo } from '../types'
+import type { ReservaConArticulo, ReservaEstado } from '../types'
+
+const ESTADOS: ReservaEstado[] = ['pendiente', 'confirmada', 'cancelada', 'completada']
 
 interface GestionarReservasModalProps {
   isOpen: boolean
@@ -21,6 +23,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
   const [editInicio, setEditInicio] = useState('')
   const [editFin, setEditFin] = useState('')
   const [editNotas, setEditNotas] = useState('')
+  const [editEstado, setEditEstado] = useState<ReservaEstado>('pendiente')
 
   const cargarReservas = async () => {
     setLoading(true)
@@ -55,6 +58,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
     setEditInicio(reserva.fecha_inicio)
     setEditFin(reserva.fecha_fin)
     setEditNotas(reserva.notas ?? '')
+    setEditEstado(reserva.estado)
   }
 
   const handleCancelarEdicion = () => {
@@ -84,6 +88,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
         fecha_fin: editFin,
         notas: editNotas || null,
       })
+      await updateReservaEstado(reserva.id, editEstado)
       setEditingId(null)
       await cargarReservas()
       onReservasChanged()
@@ -104,9 +109,20 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto">
-        <h2 className="text-xl font-bold mb-4 text-gray-800">📝 Gestionar Reservas</h2>
+    <div
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-gray-800">📝 Gestionar Reservas</h2>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
+            ✕
+          </button>
+        </div>
 
         {error && (
           <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">{error}</p>
@@ -164,7 +180,21 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         className="w-full px-2 py-1 border rounded-lg text-sm"
                       />
                     </div>
-                    <div />
+                    <div>
+                      <label htmlFor={`editEstado-${reserva.id}`} className="block text-xs text-gray-600">Estado:</label>
+                      <select
+                        id={`editEstado-${reserva.id}`}
+                        value={editEstado}
+                        onChange={(e) => setEditEstado(e.target.value as ReservaEstado)}
+                        className="w-full px-2 py-1 border rounded-lg text-sm"
+                      >
+                        {ESTADOS.map((estadoOption) => (
+                          <option key={estadoOption} value={estadoOption}>
+                            {estadoOption}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <div>
                       <label htmlFor={`editInicio-${reserva.id}`} className="block text-xs text-gray-600">Desde:</label>
                       <input
