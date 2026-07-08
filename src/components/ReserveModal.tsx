@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { createReserva, getArticulosDisponibles } from '../lib/supabase'
+import { createReserva, getArticulosDisponibles, hayConflictoReserva } from '../lib/supabase'
 import type { Articulo } from '../types'
 
 interface ReserveModalProps {
@@ -60,8 +60,21 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
       return
     }
 
+    if (finalFechaInicio > finalFechaFin) {
+      setError('La fecha de inicio no puede ser posterior a la fecha de fin.')
+      return
+    }
+
     setSaving(true)
     try {
+      if (!contextoFijo) {
+        const conflicto = await hayConflictoReserva(finalArticuloId, finalFechaInicio, finalFechaFin)
+        if (conflicto) {
+          setError('Ya existe una reserva para ese artículo en esas fechas.')
+          return
+        }
+      }
+
       await createReserva({
         articulo_id: finalArticuloId,
         cliente_nombre: clienteNombre,
