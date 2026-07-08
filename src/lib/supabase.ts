@@ -50,6 +50,11 @@ export const updateArticuloEstado = async (id: string, estado: ArticuloEstado): 
   if (error) throw error
 }
 
+export const deleteArticulo = async (id: string): Promise<void> => {
+  const { error } = await supabase.from('articulos').delete().eq('id', id)
+  if (error) throw error
+}
+
 // Reservas
 
 export const getReservas = async (): Promise<ReservaConArticulo[]> => {
