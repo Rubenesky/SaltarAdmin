@@ -5,6 +5,7 @@ import ManageArticleModal from './components/ManageArticleModal'
 import ArticleDetailModal from './components/ArticleDetailModal'
 import ReserveModal from './components/ReserveModal'
 import ReservationHistory from './components/ReservationHistory'
+import GestionarReservasModal from './components/GestionarReservasModal'
 import { getArticulos } from './lib/supabase'
 import type { Articulo } from './types'
 
@@ -13,6 +14,7 @@ function App() {
   const [showHistorial, setShowHistorial] = useState(false)
   const [modalReservaOpen, setModalReservaOpen] = useState(false)
   const [modalArticuloOpen, setModalArticuloOpen] = useState(false)
+  const [modalGestionarOpen, setModalGestionarOpen] = useState(false)
   const [detalleArticulo, setDetalleArticulo] = useState<Articulo | null>(null)
   const [selectedArticuloId, setSelectedArticuloId] = useState('')
   const [selectedArticuloNombre, setSelectedArticuloNombre] = useState('')
@@ -65,6 +67,12 @@ function App() {
                 📅 Nueva Reserva
               </button>
               <button
+                onClick={() => setModalGestionarOpen(true)}
+                className="bg-indigo-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-indigo-700 transition"
+              >
+                📝 Gestionar Reservas
+              </button>
+              <button
                 onClick={() => setShowHistorial((prev) => !prev)}
                 className="bg-blue-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-blue-700 transition"
               >
@@ -111,6 +119,14 @@ function App() {
           isOpen={modalArticuloOpen}
           onClose={() => setModalArticuloOpen(false)}
           onArticulosChanged={handleDataChanged}
+        />
+      )}
+
+      {modalGestionarOpen && (
+        <GestionarReservasModal
+          isOpen={modalGestionarOpen}
+          onClose={() => setModalGestionarOpen(false)}
+          onReservasChanged={handleDataChanged}
         />
       )}
 
