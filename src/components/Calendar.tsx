@@ -141,10 +141,16 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
             </button>
             <h3 className="font-bold text-gray-800 mb-2">{popover.reserva.cliente_nombre}</h3>
             <p className="text-sm text-gray-600">📞 {popover.reserva.cliente_telefono}</p>
+            {popover.reserva.cliente_email && (
+              <p className="text-sm text-gray-600">✉️ {popover.reserva.cliente_email}</p>
+            )}
             <p className="text-sm text-gray-600">
               📅 {popover.reserva.fecha_inicio} → {popover.reserva.fecha_fin}
             </p>
             <p className="text-sm text-gray-600 capitalize">Estado: {popover.reserva.estado}</p>
+            {popover.reserva.notas && (
+              <p className="text-sm text-gray-600 mt-2 border-t pt-2">📝 {popover.reserva.notas}</p>
+            )}
           </div>
         </>
       )}
