@@ -56,10 +56,21 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-gradient-to-r from-blue-700 to-orange-500 p-4 flex justify-between items-center flex-wrap gap-2">
-        <h1 className="text-2xl font-bold text-white">🗄️ SaltarAdmin</h1>
+        <h1
+          className="text-2xl font-bold text-white cursor-pointer"
+          onClick={() => setShowHistorial(false)}
+        >
+          🗄️ SaltarAdmin
+        </h1>
         <div className="flex flex-wrap gap-2 items-center">
           {isSignedIn ? (
             <>
+              <button
+                onClick={() => setShowHistorial(false)}
+                className="bg-white text-gray-800 px-5 py-2.5 text-lg rounded-lg hover:bg-gray-100 transition"
+              >
+                🏠 Dashboard
+              </button>
               <button
                 onClick={handleNuevaReservaClick}
                 className="bg-green-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-green-700 transition"
