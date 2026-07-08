@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { createArticulo, getArticulos, updateArticuloEstado } from '../lib/supabase'
+import { createArticulo, deleteArticulo, getArticulos, updateArticuloEstado } from '../lib/supabase'
 import type { Articulo, ArticuloEstado } from '../types'
 
 interface ManageArticleModalProps {
@@ -73,6 +73,29 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
     }
   }
 
+  const handleEliminarArticulo = async (id: string, nombre: string) => {
+    const confirmado = window.confirm(
+      `¿Seguro que quieres eliminar "${nombre}" permanentemente? Esta acción no se puede deshacer.`
+    )
+    if (!confirmado) return
+
+    setError(null)
+    try {
+      await deleteArticulo(id)
+      await cargarArticulos()
+      onArticulosChanged()
+    } catch (err) {
+      const code = (err as { code?: string })?.code
+      if (code === '23503') {
+        setError(
+          'No se puede eliminar: este artículo tiene reservas o bloqueos asociados. Cámbialo a estado "baja" en su lugar, o elimina primero sus reservas/bloqueos.'
+        )
+      } else {
+        setError(err instanceof Error ? err.message : 'No se pudo eliminar el artículo.')
+      }
+    }
+  }
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full max-h-[85vh] overflow-y-auto">
@@ -95,17 +118,25 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
                     <p className="font-medium text-gray-800">{a.nombre}</p>
                     <p className="text-xs text-gray-500">{a.categoria}</p>
                   </div>
-                  <select
-                    value={a.estado}
-                    onChange={(e) => handleEstadoChange(a.id, e.target.value as ArticuloEstado)}
-                    className="text-sm border rounded-lg px-2 py-1"
-                  >
-                    {ESTADOS.map((estadoOption) => (
-                      <option key={estadoOption} value={estadoOption}>
-                        {estadoOption}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex items-center gap-2">
+                    <select
+                      value={a.estado}
+                      onChange={(e) => handleEstadoChange(a.id, e.target.value as ArticuloEstado)}
+                      className="text-sm border rounded-lg px-2 py-1"
+                    >
+                      {ESTADOS.map((estadoOption) => (
+                        <option key={estadoOption} value={estadoOption}>
+                          {estadoOption}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => handleEliminarArticulo(a.id, a.nombre)}
+                      className="text-red-600 hover:text-red-800 text-sm"
+                    >
+                      🗑️ Eliminar
+                    </button>
+                  </div>
                 </li>
               ))
             )}
