@@ -35,3 +35,9 @@ body {
   height: 100% !important;
   margin: 0 !important;
 }
+
+/* El locale español pone el título del mes en minúscula ("julio de 2026").
+   Capitaliza solo la primera letra ("Julio de 2026"), sin afectar "de". */
+.fc-toolbar-title::first-letter {
+  text-transform: uppercase;
+}
