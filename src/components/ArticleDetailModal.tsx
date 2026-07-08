@@ -41,6 +41,12 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
   const handleCrearBloqueo = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (nuevoInicio > nuevoFin) {
+      setError('La fecha de inicio no puede ser posterior a la fecha de fin.')
+      return
+    }
+
     try {
       await createBloqueo({
         articulo_id: articulo.id,
