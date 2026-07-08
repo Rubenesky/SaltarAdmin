@@ -19,6 +19,7 @@ function App() {
   const [selectedStart, setSelectedStart] = useState('')
   const [selectedEnd, setSelectedEnd] = useState('')
   const [refreshKey, setRefreshKey] = useState(0)
+  const [error, setError] = useState('')
 
   const handleCeldaClick = (articuloId: string, articuloNombre: string, start: string, end: string) => {
     setSelectedArticuloId(articuloId)
@@ -38,9 +39,14 @@ function App() {
   }
 
   const handleArticuloClick = async (articuloId: string) => {
-    const articulos = await getArticulos()
-    const articulo = articulos.find((a) => a.id === articuloId)
-    if (articulo) setDetalleArticulo(articulo)
+    try {
+      const articulos = await getArticulos()
+      const articulo = articulos.find((a) => a.id === articuloId)
+      if (articulo) setDetalleArticulo(articulo)
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error al cargar los detalles del artículo'
+      setError(message)
+    }
   }
 
   const handleDataChanged = () => setRefreshKey((prev) => prev + 1)
@@ -78,6 +84,17 @@ function App() {
         </div>
       </nav>
       <main className="p-6">
+        {error && (
+          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded flex justify-between items-center">
+            <span>{error}</span>
+            <button
+              onClick={() => setError('')}
+              className="text-red-700 hover:text-red-900 font-bold"
+            >
+              ✕
+            </button>
+          </div>
+        )}
         {showHistorial ? (
           <ReservationHistory key={`historial-${refreshKey}`} />
         ) : (
