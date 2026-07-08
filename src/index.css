@@ -16,3 +16,22 @@ body {
 .fc-available-lane {
   background-color: #4ade80;
 }
+
+/* Los eventos (reservas/bloqueos) no rellenaban por completo su celda:
+   .fc-timeline-events tiene padding-bottom con box-sizing: content-box,
+   que añade espacio fuera de la altura que FullCalendar le fija
+   dinámicamente. Verificado en el DOM real: con este ajuste la altura
+   del evento coincide exactamente con la altura de su fila. */
+.fc-timeline-events {
+  height: 100% !important;
+  box-sizing: border-box !important;
+}
+.fc-timeline-event-harness {
+  top: 0 !important;
+  bottom: 0 !important;
+  height: auto !important;
+}
+.fc-timeline-event {
+  height: 100% !important;
+  margin: 0 !important;
+}
