@@ -15,6 +15,7 @@ const ReservationHistory: React.FC = () => {
   const [reservas, setReservas] = useState<ReservaConArticulo[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [searchTerm, setSearchTerm] = useState('')
 
   const cargarReservas = async () => {
     setLoading(true)
@@ -42,6 +43,12 @@ const ReservationHistory: React.FC = () => {
     }
   }
 
+  const reservasFiltradas = reservas.filter((r) => {
+    const term = searchTerm.trim().toLowerCase()
+    if (!term) return true
+    return r.cliente_nombre.toLowerCase().includes(term) || r.cliente_telefono.toLowerCase().includes(term)
+  })
+
   if (loading) return <div className="p-4 text-center text-gray-600">Cargando historial...</div>
 
   return (
@@ -50,6 +57,15 @@ const ReservationHistory: React.FC = () => {
       {error && (
         <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">{error}</p>
       )}
+      <div className="mb-4">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          placeholder="Buscar por nombre o teléfono..."
+          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+        />
+      </div>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -70,8 +86,14 @@ const ReservationHistory: React.FC = () => {
                   Sin reservas todavía.
                 </td>
               </tr>
+            ) : reservasFiltradas.length === 0 ? (
+              <tr>
+                <td colSpan={7} className="px-6 py-4 text-gray-500">
+                  No se encontraron resultados.
+                </td>
+              </tr>
             ) : (
-              reservas.map((reserva) => (
+              reservasFiltradas.map((reserva) => (
                 <tr key={reserva.id}>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{reserva.cliente_nombre}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{reserva.cliente_telefono}</td>
