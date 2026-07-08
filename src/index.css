@@ -4,4 +4,12 @@
 
 body {
   margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* FullCalendar renders background events (used for the "available" green
+   base layer in the resource timeline) at 0.3 opacity by default, which
+   washes the color out. Force full opacity so it reads as solid green. */
+.fc-bg-event {
+  opacity: 1;
 }
