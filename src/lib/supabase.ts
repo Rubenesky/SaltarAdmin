@@ -94,6 +94,40 @@ export const updateReservaEstado = async (id: string, estado: ReservaEstado): Pr
   if (error) throw error
 }
 
+export const updateReserva = async (
+  id: string,
+  updates: {
+    cliente_nombre: string
+    cliente_telefono: string
+    cliente_email?: string | null
+    fecha_inicio: string
+    fecha_fin: string
+    notas?: string | null
+  }
+): Promise<void> => {
+  const { error } = await supabase.from('reservas').update(updates).eq('id', id)
+  if (error) throw error
+}
+
+export const hayConflictoReserva = async (
+  articuloId: string,
+  fechaInicio: string,
+  fechaFin: string,
+  excluirReservaId?: string
+): Promise<boolean> => {
+  let query = supabase
+    .from('reservas')
+    .select('id')
+    .eq('articulo_id', articuloId)
+    .neq('estado', 'cancelada')
+    .lt('fecha_inicio', fechaFin)
+    .gt('fecha_fin', fechaInicio)
+  if (excluirReservaId) query = query.neq('id', excluirReservaId)
+  const { data, error } = await query
+  if (error) throw error
+  return (data ?? []).length > 0
+}
+
 // Bloqueos
 
 export const getBloqueos = async (articuloId?: string): Promise<Bloqueo[]> => {
