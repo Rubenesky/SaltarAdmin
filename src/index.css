@@ -7,9 +7,12 @@ body {
   font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
-/* FullCalendar renders background events (used for the "available" green
-   base layer in the resource timeline) at 0.3 opacity by default, which
-   washes the color out. Force full opacity so it reads as solid green. */
-.fc-bg-event {
-  opacity: 1;
+/* Green "available" base color for each resource row in the calendar.
+   Applied via resourceLaneClassNames rather than a FullCalendar
+   background event, because a background event's rendered element sits
+   on top of the row and intercepts click/drag input meant for date
+   selection -- resourceLaneClassNames styles the row itself without
+   adding a competing interactive element. */
+.fc-available-lane {
+  background-color: #4ade80;
 }

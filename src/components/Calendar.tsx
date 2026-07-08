@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import interactionPlugin from '@fullcalendar/interaction'
-import type { DatesSetArg, EventClickArg } from '@fullcalendar/core'
+import type { EventClickArg } from '@fullcalendar/core'
 import { getArticulosDisponibles, getBloqueos, getReservas } from '../lib/supabase'
 import type { Articulo, Bloqueo, ReservaConArticulo } from '../types'
 
@@ -22,7 +22,6 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
   const [reservas, setReservas] = useState<ReservaConArticulo[]>([])
   const [bloqueos, setBloqueos] = useState<Bloqueo[]>([])
   const [loading, setLoading] = useState(true)
-  const [viewRange, setViewRange] = useState<{ start: string; end: string } | null>(null)
   const [popover, setPopover] = useState<ReservaPopoverState | null>(null)
 
   const onArticuloClickRef = useRef(onArticuloClick)
@@ -47,18 +46,6 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
   }, [])
 
   const resources = useMemo(() => articulos.map((a) => ({ id: a.id, title: a.nombre })), [articulos])
-
-  const backgroundEvents = useMemo(() => {
-    if (!viewRange) return []
-    return articulos.map((a) => ({
-      id: `bg-${a.id}`,
-      resourceId: a.id,
-      start: viewRange.start,
-      end: viewRange.end,
-      display: 'background' as const,
-      backgroundColor: '#4ade80',
-    }))
-  }, [articulos, viewRange])
 
   const reservaEvents = useMemo(
     () =>
@@ -92,14 +79,7 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
     [bloqueos]
   )
 
-  const events = useMemo(
-    () => [...backgroundEvents, ...reservaEvents, ...bloqueoEvents],
-    [backgroundEvents, reservaEvents, bloqueoEvents]
-  )
-
-  const handleDatesSet = (info: DatesSetArg) => {
-    setViewRange({ start: info.startStr, end: info.endStr })
-  }
+  const events = useMemo(() => [...reservaEvents, ...bloqueoEvents], [reservaEvents, bloqueoEvents])
 
   const handleEventClick = (info: EventClickArg) => {
     if (info.event.extendedProps.type === 'reserva') {
@@ -126,9 +106,10 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
         resourceAreaWidth="200px"
         resourceAreaHeaderContent="Artículos"
         height="auto"
+        schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
+        resourceLaneClassNames={() => ['fc-available-lane']}
         selectable
         selectOverlap={false}
-        datesSet={handleDatesSet}
         select={(info) => {
           if (info.resource?.id) {
             onCeldaClick(info.resource.id, info.resource.title, info.startStr, info.endStr)
