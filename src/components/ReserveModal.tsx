@@ -1,71 +1,175 @@
-import React, { useState } from 'react';
-import { useSupabase } from '../lib/supabase';
+import React, { useEffect, useState } from 'react'
+import { createReserva, getArticulosDisponibles } from '../lib/supabase'
+import type { Articulo } from '../types'
 
 interface ReserveModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  articuloId: number;
-  fechaInicio: string;
-  fechaFin: string;
-  onReservaCreada: (reserva: any) => void;
+  isOpen: boolean
+  onClose: () => void
+  onReservaCreada: () => void
+  articuloId?: string
+  articuloNombre?: string
+  fechaInicio?: string
+  fechaFin?: string
 }
 
-const ReserveModal: React.FC<ReserveModalProps> = ({ isOpen, onClose, articuloId, fechaInicio, fechaFin, onReservaCreada }) => {
-  const { supabase } = useSupabase();
-  const [nombreCliente, setNombreCliente] = useState('');
-  const [telefono, setTelefono] = useState('');
-  const [email, setEmail] = useState('');
-  const [notas, setNotas] = useState('');
+const ReserveModal: React.FC<ReserveModalProps> = ({
+  isOpen,
+  onClose,
+  onReservaCreada,
+  articuloId,
+  articuloNombre,
+  fechaInicio,
+  fechaFin,
+}) => {
+  const contextoFijo = Boolean(articuloId && fechaInicio && fechaFin)
+
+  const [articulosDisponibles, setArticulosDisponibles] = useState<Articulo[]>([])
+  const [formArticuloId, setFormArticuloId] = useState('')
+  const [formFechaInicio, setFormFechaInicio] = useState('')
+  const [formFechaFin, setFormFechaFin] = useState('')
+  const [clienteNombre, setClienteNombre] = useState('')
+  const [clienteTelefono, setClienteTelefono] = useState('')
+  const [clienteEmail, setClienteEmail] = useState('')
+  const [notas, setNotas] = useState('')
+  const [error, setError] = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+
+  useEffect(() => {
+    if (isOpen && !contextoFijo) {
+      getArticulosDisponibles()
+        .then((data) => {
+          setArticulosDisponibles(data)
+          setFormArticuloId(data[0]?.id ?? '')
+        })
+        .catch((err) => setError(err instanceof Error ? err.message : 'No se pudieron cargar los artículos.'))
+    }
+  }, [isOpen, contextoFijo])
+
+  if (!isOpen) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const { data, error } = await supabase
-        .from('reservas')
-        .insert([{ cliente: nombreCliente, telefono, email, notas, articulo_id: articuloId, fecha_inicio: fechaInicio, fecha_fin: fechaFin, estado: 'pendiente' }]);
-      if (!error) {
-        onReservaCreada(data[0]);
-        onClose();
-      }
-    } catch (error) {
-      console.error('Error creating reservation:', error);
+    e.preventDefault()
+    setError(null)
+
+    const finalArticuloId = contextoFijo ? articuloId! : formArticuloId
+    const finalFechaInicio = contextoFijo ? fechaInicio! : formFechaInicio
+    const finalFechaFin = contextoFijo ? fechaFin! : formFechaFin
+
+    if (!finalArticuloId || !finalFechaInicio || !finalFechaFin) {
+      setError('Selecciona artículo y fechas.')
+      return
     }
-  };
+
+    setSaving(true)
+    try {
+      await createReserva({
+        articulo_id: finalArticuloId,
+        cliente_nombre: clienteNombre,
+        cliente_telefono: clienteTelefono,
+        cliente_email: clienteEmail || null,
+        fecha_inicio: finalFechaInicio,
+        fecha_fin: finalFechaFin,
+        notas: notas || null,
+      })
+      onReservaCreada()
+      onClose()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo crear la reserva.')
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
-        <h2 className="text-xl font-bold mb-4">Crear Reserva</h2>
+        <h2 className="text-xl font-bold mb-1 text-gray-800">📝 Crear Reserva</h2>
+
+        {contextoFijo && (
+          <p className="text-sm text-gray-500 mb-4">
+            {articuloNombre} · {fechaInicio} → {fechaFin}
+          </p>
+        )}
+
+        {error && (
+          <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">{error}</p>
+        )}
+
         <form onSubmit={handleSubmit}>
+          {!contextoFijo && (
+            <>
+              <div className="mb-4">
+                <label htmlFor="formArticuloId" className="block text-gray-700">Artículo:</label>
+                <select
+                  id="formArticuloId"
+                  value={formArticuloId}
+                  onChange={(e) => setFormArticuloId(e.target.value)}
+                  required
+                  className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                >
+                  {articulosDisponibles.map((a) => (
+                    <option key={a.id} value={a.id}>
+                      {a.nombre}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-4 grid grid-cols-2 gap-2">
+                <div>
+                  <label htmlFor="formFechaInicio" className="block text-gray-700">Desde:</label>
+                  <input
+                    type="date"
+                    id="formFechaInicio"
+                    value={formFechaInicio}
+                    onChange={(e) => setFormFechaInicio(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="formFechaFin" className="block text-gray-700">Hasta:</label>
+                  <input
+                    type="date"
+                    id="formFechaFin"
+                    value={formFechaFin}
+                    onChange={(e) => setFormFechaFin(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
           <div className="mb-4">
-            <label htmlFor="nombreCliente" className="block text-gray-700">Nombre del Cliente:</label>
+            <label htmlFor="clienteNombre" className="block text-gray-700">Nombre del Cliente:</label>
             <input
               type="text"
-              id="nombreCliente"
-              value={nombreCliente}
-              onChange={(e) => setNombreCliente(e.target.value)}
+              id="clienteNombre"
+              value={clienteNombre}
+              onChange={(e) => setClienteNombre(e.target.value)}
               required
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="telefono" className="block text-gray-700">Teléfono:</label>
+            <label htmlFor="clienteTelefono" className="block text-gray-700">Teléfono:</label>
             <input
               type="text"
-              id="telefono"
-              value={telefono}
-              onChange={(e) => setTelefono(e.target.value)}
+              id="clienteTelefono"
+              value={clienteTelefono}
+              onChange={(e) => setClienteTelefono(e.target.value)}
               required
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
             />
           </div>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700">Email (opcional):</label>
+            <label htmlFor="clienteEmail" className="block text-gray-700">Email (opcional):</label>
             <input
               type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              id="clienteEmail"
+              value={clienteEmail}
+              onChange={(e) => setClienteEmail(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -78,16 +182,24 @@ const ReserveModal: React.FC<ReserveModalProps> = ({ isOpen, onClose, articuloId
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
             />
           </div>
-          <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
-            Reservar
+          <button
+            type="submit"
+            disabled={saving}
+            className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+          >
+            ✅ Crear Reserva
           </button>
-          <button type="button" onClick={onClose} className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition ml-2">
+          <button
+            type="button"
+            onClick={onClose}
+            className="bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400 transition ml-2"
+          >
             Cancelar
           </button>
         </form>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ReserveModal;
+export default ReserveModal
