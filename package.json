@@ -10,6 +10,7 @@
   "devDependencies": {
     "@types/node": "^18.19.130",
     "@types/react": "^18.2.34",
+    "@types/react-dom": "^18.3.7",
     "@types/react-modal": "^3.16.3",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
