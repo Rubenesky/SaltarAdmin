@@ -216,6 +216,9 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                     <p className="text-gray-500">
                       📞 {reserva.cliente_telefono} · 📅 {reserva.fecha_inicio} → {reserva.fecha_fin} · {reserva.estado}
                     </p>
+                    {reserva.notas && (
+                      <p className="text-gray-500">📝 {reserva.notas}</p>
+                    )}
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
                     <button
