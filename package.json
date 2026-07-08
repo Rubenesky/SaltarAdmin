@@ -7,15 +7,28 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^18.19.130",
     "@types/react": "^18.2.34",
-    "@types/node": "^18.15.10",
-    "autoprefixer": "^10.4.16",
-    "postcss": "^8.4.24",
+    "@types/react-modal": "^3.16.3",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "tailwindcss": "^3.2.7",
-    "typescript": "^5.0.4"
+    "tailwindcss": "^3.4.15",
+    "typescript": "^5.0.4",
+    "vite": "^5.4.15"
+  },
+  "dependencies": {
+    "@clerk/clerk-react": "^5.61.8",
+    "@fullcalendar/daygrid": "^6.1.21",
+    "@fullcalendar/interaction": "^6.1.21",
+    "@fullcalendar/react": "^6.1.21",
+    "@fullcalendar/resource-timeline": "^6.1.21",
+    "@fullcalendar/timegrid": "^6.1.21",
+    "@supabase/supabase-js": "^2.110.0",
+    "lucide-react": "^1.23.0",
+    "react-modal": "^3.16.3"
   }
 }
