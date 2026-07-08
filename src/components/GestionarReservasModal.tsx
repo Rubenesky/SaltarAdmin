@@ -71,7 +71,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
     try {
       const conflicto = await hayConflictoReserva(reserva.articulo_id, editInicio, editFin, reserva.id)
       if (conflicto) {
-        setError('Ya existe otra reserva para ese artículo en esas fechas.')
+        setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
         return
       }
 

@@ -115,17 +115,29 @@ export const hayConflictoReserva = async (
   fechaFin: string,
   excluirReservaId?: string
 ): Promise<boolean> => {
-  let query = supabase
+  let reservaQuery = supabase
     .from('reservas')
     .select('id')
     .eq('articulo_id', articuloId)
     .neq('estado', 'cancelada')
     .lt('fecha_inicio', fechaFin)
     .gt('fecha_fin', fechaInicio)
-  if (excluirReservaId) query = query.neq('id', excluirReservaId)
-  const { data, error } = await query
-  if (error) throw error
-  return (data ?? []).length > 0
+  if (excluirReservaId) reservaQuery = reservaQuery.neq('id', excluirReservaId)
+
+  const [reservaResult, bloqueoResult] = await Promise.all([
+    reservaQuery,
+    supabase
+      .from('bloqueos')
+      .select('id')
+      .eq('articulo_id', articuloId)
+      .lt('fecha_inicio', fechaFin)
+      .gt('fecha_fin', fechaInicio),
+  ])
+
+  if (reservaResult.error) throw reservaResult.error
+  if (bloqueoResult.error) throw bloqueoResult.error
+
+  return (reservaResult.data ?? []).length > 0 || (bloqueoResult.data ?? []).length > 0
 }
 
 // Bloqueos

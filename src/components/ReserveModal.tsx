@@ -70,7 +70,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
       if (!contextoFijo) {
         const conflicto = await hayConflictoReserva(finalArticuloId, finalFechaInicio, finalFechaFin)
         if (conflicto) {
-          setError('Ya existe una reserva para ese artículo en esas fechas.')
+          setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
           return
         }
       }

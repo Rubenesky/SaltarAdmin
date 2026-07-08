@@ -14,6 +14,13 @@
 -- articulo_id, el ALTER TABLE de abajo fallará. En ese caso habría que
 -- cancelar o corregir manualmente esas reservas antes de poder aplicar la
 -- restricción.
+--
+-- El rango se construye como '[)' (extremo inferior incluido, extremo
+-- superior excluido) para reflejar la misma convención de intervalo
+-- semiabierto [fecha_inicio, fecha_fin) que usa la app (ver hayConflictoReserva
+-- y el uso de endStr en FullCalendar). Así, una reserva que termina un día
+-- y otra que empieza ese mismo día (mismo día de recogida/entrega) no se
+-- consideran solapadas.
 
 -- Habilita el tipo de índice necesario para la restricción (una sola vez por proyecto)
 CREATE EXTENSION IF NOT EXISTS btree_gist;
@@ -23,6 +30,6 @@ ALTER TABLE reservas
   ADD CONSTRAINT no_solapamiento_reservas
   EXCLUDE USING gist (
     articulo_id WITH =,
-    daterange(fecha_inicio, fecha_fin, '[]') WITH &&
+    daterange(fecha_inicio, fecha_fin, '[)') WITH &&
   )
   WHERE (estado <> 'cancelada');
