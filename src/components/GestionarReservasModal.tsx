@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getReservas, hayConflictoReserva, updateReserva, updateReservaEstado } from '../lib/supabase'
+import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo } from '../types'
 
 interface GestionarReservasModalProps {
@@ -214,7 +215,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                       {reserva.cliente_nombre} · {reserva.articulos?.nombre ?? '—'}
                     </p>
                     <p className="text-gray-500">
-                      📞 {reserva.cliente_telefono} · 📅 {reserva.fecha_inicio} → {reserva.fecha_fin} · {reserva.estado}
+                      📞 {reserva.cliente_telefono} · 📅 {formatFecha(reserva.fecha_inicio)} → {formatFecha(reserva.fecha_fin)} · {reserva.estado}
                     </p>
                     {reserva.notas && (
                       <p className="text-gray-500">📝 {reserva.notas}</p>

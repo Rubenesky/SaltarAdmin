@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { createBloqueo, deleteBloqueo, getBloqueos, getReservasPorArticulo } from '../lib/supabase'
+import { formatFecha } from '../lib/format'
 import type { Articulo, Bloqueo, Reserva } from '../types'
 
 interface ArticleDetailModalProps {
@@ -113,7 +114,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
                       <tr key={r.id}>
                         <td className="px-3 py-2">{r.cliente_nombre}</td>
                         <td className="px-3 py-2">
-                          {r.fecha_inicio} → {r.fecha_fin}
+                          {formatFecha(r.fecha_inicio)} → {formatFecha(r.fecha_fin)}
                         </td>
                         <td className="px-3 py-2 capitalize">{r.estado}</td>
                       </tr>
@@ -131,7 +132,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
                 bloqueos.map((b) => (
                   <li key={b.id} className="flex items-center justify-between px-3 py-2 text-sm">
                     <span>
-                      {b.fecha_inicio} → {b.fecha_fin} · {b.motivo}
+                      {formatFecha(b.fecha_inicio)} → {formatFecha(b.fecha_fin)} · {b.motivo}
                     </span>
                     <button onClick={() => handleEliminarBloqueo(b.id)} className="text-red-600 hover:text-red-800">
                       Eliminar

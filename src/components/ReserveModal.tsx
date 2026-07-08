@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { createReserva, getArticulosDisponibles, hayConflictoReserva } from '../lib/supabase'
+import { formatFecha } from '../lib/format'
 import type { Articulo } from '../types'
 
 interface ReserveModalProps {
@@ -100,7 +101,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
 
         {contextoFijo && (
           <p className="text-sm text-gray-500 mb-4">
-            {articuloNombre} · {fechaInicio} → {fechaFin}
+            {articuloNombre} · {formatFecha(fechaInicio!)} → {formatFecha(fechaFin!)}
           </p>
         )}
 

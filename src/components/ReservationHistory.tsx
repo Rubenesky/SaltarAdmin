@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getReservas, updateReservaEstado } from '../lib/supabase'
+import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo, ReservaEstado } from '../types'
 
 const ESTADO_STYLES: Record<ReservaEstado, string> = {
@@ -98,8 +99,8 @@ const ReservationHistory: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{reserva.cliente_nombre}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{reserva.cliente_telefono}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{reserva.articulos?.nombre ?? '—'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{reserva.fecha_inicio}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{reserva.fecha_fin}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatFecha(reserva.fecha_inicio)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{formatFecha(reserva.fecha_fin)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <select
                       value={reserva.estado}

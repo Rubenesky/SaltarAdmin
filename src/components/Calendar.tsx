@@ -5,6 +5,7 @@ import interactionPlugin from '@fullcalendar/interaction'
 import type { EventClickArg } from '@fullcalendar/core'
 import esLocale from '@fullcalendar/core/locales/es'
 import { getArticulosDisponibles, getBloqueos, getReservas } from '../lib/supabase'
+import { formatFecha } from '../lib/format'
 import type { Articulo, Bloqueo, ReservaConArticulo } from '../types'
 
 interface CalendarProps {
@@ -145,7 +146,7 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
               <p className="text-sm text-gray-600">✉️ {popover.reserva.cliente_email}</p>
             )}
             <p className="text-sm text-gray-600">
-              📅 {popover.reserva.fecha_inicio} → {popover.reserva.fecha_fin}
+              📅 {formatFecha(popover.reserva.fecha_inicio)} → {formatFecha(popover.reserva.fecha_fin)}
             </p>
             <p className="text-sm text-gray-600 capitalize">Estado: {popover.reserva.estado}</p>
             {popover.reserva.notas && (
