@@ -3,6 +3,7 @@ import FullCalendar from '@fullcalendar/react'
 import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import interactionPlugin from '@fullcalendar/interaction'
 import type { EventClickArg } from '@fullcalendar/core'
+import esLocale from '@fullcalendar/core/locales/es'
 import { getArticulosDisponibles, getBloqueos, getReservas } from '../lib/supabase'
 import type { Articulo, Bloqueo, ReservaConArticulo } from '../types'
 
@@ -106,6 +107,8 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
         resourceAreaWidth="200px"
         resourceAreaHeaderContent="Artículos"
         height="auto"
+        locale={esLocale}
+        slotLabelFormat={{ day: 'numeric' }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         resourceLaneClassNames={() => ['fc-available-lane']}
         selectable
