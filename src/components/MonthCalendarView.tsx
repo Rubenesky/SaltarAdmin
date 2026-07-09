@@ -4,9 +4,17 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import type { DateClickArg } from '@fullcalendar/interaction'
 import esLocale from '@fullcalendar/core/locales/es'
+import type { DayCellContentArg } from '@fullcalendar/core'
 import { getReservas } from '../lib/supabase'
 import DayReservationsModal from './DayReservationsModal'
 import type { ReservaConArticulo } from '../types'
+
+const toDateStr = (date: Date): string => {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
 
 const MonthCalendarView: React.FC = () => {
   const [reservas, setReservas] = useState<ReservaConArticulo[]>([])
@@ -38,6 +46,12 @@ const MonthCalendarView: React.FC = () => {
       )
     : []
 
+  const tieneReservaEnDia = (fecha: string): boolean =>
+    reservas.some((r) => r.estado !== 'cancelada' && r.fecha_inicio <= fecha && fecha < r.fecha_fin)
+
+  const handleDayCellClassNames = (arg: DayCellContentArg): string[] =>
+    tieneReservaEnDia(toDateStr(arg.date)) ? ['fc-day-has-reserva'] : []
+
   if (loading) return <div className="p-4 text-center text-gray-600">Cargando calendario...</div>
 
   return (
@@ -53,6 +67,7 @@ const MonthCalendarView: React.FC = () => {
         headerToolbar={{ left: 'prev,next today', center: 'title', right: '' }}
         height="auto"
         dateClick={handleDateClick}
+        dayCellClassNames={handleDayCellClassNames}
       />
 
       {fechaSeleccionada && (

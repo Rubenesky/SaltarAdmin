@@ -41,3 +41,17 @@ body {
 .fc-toolbar-title::first-letter {
   text-transform: uppercase;
 }
+
+/* Vista Calendario (dayGridMonth): fondo rojo pálido en los días con
+   reservas activas. El resaltado de "Hoy" pasa de fondo amarillo a un
+   borde para que ambos estados (hoy + con reserva) puedan combinarse
+   sin pisarse -- por eso el orden de estas dos reglas importa: la de
+   fc-day-has-reserva va después para ganar el empate de especificidad
+   en el color de fondo cuando un día es hoy y tiene reserva a la vez. */
+.fc .fc-daygrid-day.fc-day-today {
+  background-color: transparent;
+  box-shadow: inset 0 0 0 2px #3b82f6;
+}
+.fc .fc-daygrid-day.fc-day-has-reserva {
+  background-color: #fef2f2;
+}
