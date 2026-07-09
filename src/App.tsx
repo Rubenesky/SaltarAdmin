@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useAuth, SignInButton, UserButton } from '@clerk/clerk-react'
 import Calendar from './components/Calendar'
+import MonthCalendarView from './components/MonthCalendarView'
 import ManageArticleModal from './components/ManageArticleModal'
 import ArticleDetailModal from './components/ArticleDetailModal'
 import ReserveModal from './components/ReserveModal'
@@ -9,9 +10,11 @@ import GestionarReservasModal from './components/GestionarReservasModal'
 import { getArticulos } from './lib/supabase'
 import type { Articulo } from './types'
 
+type Vista = 'dashboard' | 'calendario' | 'historial'
+
 function App() {
   const { isSignedIn } = useAuth()
-  const [showHistorial, setShowHistorial] = useState(false)
+  const [vista, setVista] = useState<Vista>('dashboard')
   const [modalReservaOpen, setModalReservaOpen] = useState(false)
   const [modalArticuloOpen, setModalArticuloOpen] = useState(false)
   const [modalGestionarOpen, setModalGestionarOpen] = useState(false)
@@ -32,7 +35,7 @@ function App() {
   }
 
   const handleNuevaReservaClick = () => {
-    setShowHistorial(false)
+    setVista('dashboard')
     setSelectedArticuloId('')
     setSelectedArticuloNombre('')
     setSelectedStart('')
@@ -58,7 +61,7 @@ function App() {
       <nav className="bg-gradient-to-r from-blue-700 to-orange-500 p-4 flex justify-between items-center flex-wrap gap-2">
         <h1
           className="text-2xl font-bold text-white cursor-pointer"
-          onClick={() => setShowHistorial(false)}
+          onClick={() => setVista('dashboard')}
         >
           🗄️ SaltarAdmin
         </h1>
@@ -66,10 +69,16 @@ function App() {
           {isSignedIn ? (
             <>
               <button
-                onClick={() => setShowHistorial(false)}
+                onClick={() => setVista('dashboard')}
                 className="bg-white text-gray-800 px-5 py-2.5 text-lg rounded-lg hover:bg-gray-100 transition"
               >
                 🏠 Dashboard
+              </button>
+              <button
+                onClick={() => setVista('calendario')}
+                className="bg-teal-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-teal-700 transition"
+              >
+                📆 Calendario
               </button>
               <button
                 onClick={handleNuevaReservaClick}
@@ -84,7 +93,7 @@ function App() {
                 📝 Gestionar Reservas
               </button>
               <button
-                onClick={() => setShowHistorial((prev) => !prev)}
+                onClick={() => setVista((prev) => (prev === 'historial' ? 'dashboard' : 'historial'))}
                 className="bg-blue-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-blue-700 transition"
               >
                 📋 Historial
@@ -114,8 +123,10 @@ function App() {
             </button>
           </div>
         )}
-        {showHistorial ? (
+        {vista === 'historial' ? (
           <ReservationHistory key={`historial-${refreshKey}`} />
+        ) : vista === 'calendario' ? (
+          <MonthCalendarView key={`mes-${refreshKey}`} />
         ) : (
           <Calendar
             key={`calendario-${refreshKey}`}
