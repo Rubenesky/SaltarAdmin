@@ -11,7 +11,9 @@ create policy "Lectura pública de imágenes de artículos"
 on storage.objects for select
 using (bucket_id = 'articulo-imagenes');
 
--- Subida pública (sin RLS de por medio, igual que el resto del proyecto).
+-- Subida pública (sin RLS de por medio, igual que el resto del proyecto),
+-- restringida a archivos de tipo imagen para evitar que se sirvan
+-- archivos arbitrarios (p. ej. HTML/JS) desde la URL pública del bucket.
 create policy "Subida pública de imágenes de artículos"
 on storage.objects for insert
-with check (bucket_id = 'articulo-imagenes');
+with check (bucket_id = 'articulo-imagenes' and (metadata->>'mimetype') like 'image/%');

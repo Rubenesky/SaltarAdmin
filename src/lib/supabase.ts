@@ -36,7 +36,7 @@ export const getArticulosDisponibles = async (): Promise<Articulo[]> => {
 }
 
 export const uploadArticuloImagen = async (file: File): Promise<string> => {
-  const path = `${crypto.randomUUID()}-${file.name}`
+  const path = crypto.randomUUID()
   const { error } = await supabase.storage.from('articulo-imagenes').upload(path, file)
   if (error) throw error
   const { data } = supabase.storage.from('articulo-imagenes').getPublicUrl(path)
