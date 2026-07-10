@@ -85,6 +85,13 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
         className="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
+        {articulo.imagen_url && (
+          <img
+            src={articulo.imagen_url}
+            alt={articulo.nombre}
+            className="w-full h-48 object-cover rounded-lg mb-4"
+          />
+        )}
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-bold text-gray-800">{articulo.nombre}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
