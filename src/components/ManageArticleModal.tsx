@@ -56,6 +56,11 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
       return
     }
 
+    if (imagenArchivo && !['image/png', 'image/jpeg', 'image/webp', 'image/gif'].includes(imagenArchivo.type)) {
+      setError('Formato de imagen no soportado. Usa PNG, JPEG, WebP o GIF.')
+      return
+    }
+
     try {
       const imagenUrl = imagenArchivo ? await uploadArticuloImagen(imagenArchivo) : null
       await createArticulo({ nombre, categoria, estado, imagen_url: imagenUrl })
