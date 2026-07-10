@@ -42,16 +42,21 @@ body {
   text-transform: uppercase;
 }
 
-/* Vista Calendario (dayGridMonth): fondo rojo pálido en los días con
-   reservas activas. El resaltado de "Hoy" pasa de fondo amarillo a un
-   borde para que ambos estados (hoy + con reserva) puedan combinarse
-   sin pisarse -- por eso el orden de estas dos reglas importa: la de
-   fc-day-has-reserva va después para ganar el empate de especificidad
-   en el color de fondo cuando un día es hoy y tiene reserva a la vez. */
+/* Vista Calendario (dayGridMonth): verde vivo en los días libres, rojo
+   vivo en los días con reservas activas. El resaltado de "Hoy" pasa de
+   fondo amarillo a un borde para que pueda combinarse con cualquiera de
+   los dos sin pisarlo -- por eso el orden de estas reglas importa: las
+   de fc-day-libre/fc-day-has-reserva van después para ganar el empate
+   de especificidad en el color de fondo cuando un día es "hoy" además.
+   fc-day-libre excluye fc-day-other (días de meses adyacentes que se
+   muestran atenuados) para no pintarlos como si fueran del mes actual. */
 .fc .fc-daygrid-day.fc-day-today {
   background-color: transparent;
   box-shadow: inset 0 0 0 2px #3b82f6;
 }
+.fc .fc-daygrid-day.fc-day-libre:not(.fc-day-other) {
+  background-color: #22c55e;
+}
 .fc .fc-daygrid-day.fc-day-has-reserva {
-  background-color: #fef2f2;
+  background-color: #ef4444;
 }

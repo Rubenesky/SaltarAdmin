@@ -50,7 +50,7 @@ const MonthCalendarView: React.FC = () => {
     reservas.some((r) => r.estado !== 'cancelada' && r.fecha_inicio <= fecha && fecha < r.fecha_fin)
 
   const handleDayCellClassNames = (arg: DayCellContentArg): string[] =>
-    tieneReservaEnDia(toDateStr(arg.date)) ? ['fc-day-has-reserva'] : []
+    tieneReservaEnDia(toDateStr(arg.date)) ? ['fc-day-has-reserva'] : ['fc-day-libre']
 
   if (loading) return <div className="p-4 text-center text-gray-600">Cargando calendario...</div>
 
