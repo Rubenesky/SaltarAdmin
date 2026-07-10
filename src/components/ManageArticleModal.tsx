@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { createArticulo, deleteArticulo, getArticulos, updateArticuloEstado } from '../lib/supabase'
+import { createArticulo, deleteArticulo, getArticulos, updateArticuloEstado, uploadArticuloImagen } from '../lib/supabase'
 import type { Articulo, ArticuloEstado } from '../types'
 
 interface ManageArticleModalProps {
@@ -26,6 +26,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
   const [nombre, setNombre] = useState('')
   const [categoria, setCategoria] = useState(CATEGORIAS[0])
   const [estado, setEstado] = useState<ArticuloEstado>('disponible')
+  const [imagenArchivo, setImagenArchivo] = useState<File | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   const cargarArticulos = async () => {
@@ -49,11 +50,19 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+
+    if (imagenArchivo && imagenArchivo.size > 5 * 1024 * 1024) {
+      setError('La imagen no puede superar 5MB.')
+      return
+    }
+
     try {
-      await createArticulo({ nombre, categoria, estado })
+      const imagenUrl = imagenArchivo ? await uploadArticuloImagen(imagenArchivo) : null
+      await createArticulo({ nombre, categoria, estado, imagen_url: imagenUrl })
       setNombre('')
       setCategoria(CATEGORIAS[0])
       setEstado('disponible')
+      setImagenArchivo(null)
       setShowForm(false)
       await cargarArticulos()
       onArticulosChanged()
@@ -198,6 +207,16 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
                   </option>
                 ))}
               </select>
+            </div>
+            <div className="mb-4">
+              <label htmlFor="imagenArchivo" className="block text-gray-700">Imagen (opcional):</label>
+              <input
+                type="file"
+                id="imagenArchivo"
+                accept="image/*"
+                onChange={(e) => setImagenArchivo(e.target.files?.[0] ?? null)}
+                className="w-full text-sm text-gray-700"
+              />
             </div>
             <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition">
               Crear
