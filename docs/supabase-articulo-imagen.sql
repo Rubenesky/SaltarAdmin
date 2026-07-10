@@ -12,8 +12,13 @@ on storage.objects for select
 using (bucket_id = 'articulo-imagenes');
 
 -- Subida pública (sin RLS de por medio, igual que el resto del proyecto),
--- restringida a archivos de tipo imagen para evitar que se sirvan
--- archivos arbitrarios (p. ej. HTML/JS) desde la URL pública del bucket.
+-- restringida a una lista explícita de tipos de imagen raster. El wildcard
+-- 'image/%' se descartó porque también admite image/svg+xml, que puede
+-- contener <script> embebido y es un vector de XSS conocido si se sirve
+-- directamente desde la URL pública del bucket.
 create policy "Subida pública de imágenes de artículos"
 on storage.objects for insert
-with check (bucket_id = 'articulo-imagenes' and (metadata->>'mimetype') like 'image/%');
+with check (
+  bucket_id = 'articulo-imagenes'
+  and (metadata->>'mimetype') in ('image/png', 'image/jpeg', 'image/webp', 'image/gif')
+);
