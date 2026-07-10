@@ -6,6 +6,7 @@ export interface Articulo {
   nombre: string
   categoria: string
   estado: ArticuloEstado
+  imagen_url: string | null
   created_at: string
   updated_at: string
 }
