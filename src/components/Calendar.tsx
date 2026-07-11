@@ -129,6 +129,7 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
         resourceAreaHeaderContent="Artículos"
         height="auto"
         locale={esLocale}
+        slotDuration={{ days: 1 }}
         slotLabelFormat={{ day: 'numeric' }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         resourceLaneClassNames={() => ['fc-available-lane']}
