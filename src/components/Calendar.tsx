@@ -25,11 +25,27 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
   const [bloqueos, setBloqueos] = useState<Bloqueo[]>([])
   const [loading, setLoading] = useState(true)
   const [popover, setPopover] = useState<ReservaPopoverState | null>(null)
+  const calendarRef = useRef<FullCalendar>(null)
 
   const onArticuloClickRef = useRef(onArticuloClick)
   useEffect(() => {
     onArticuloClickRef.current = onArticuloClick
   }, [onArticuloClick])
+
+  useEffect(() => {
+    const applyResponsiveView = () => {
+      const api = calendarRef.current?.getApi()
+      if (!api) return
+      const isMobile = window.innerWidth < 768
+      const targetView = isMobile ? 'resourceTimelineWeek' : 'resourceTimelineMonth'
+      if (api.view.type !== targetView) {
+        api.changeView(targetView)
+      }
+    }
+    applyResponsiveView()
+    window.addEventListener('resize', applyResponsiveView)
+    return () => window.removeEventListener('resize', applyResponsiveView)
+  }, [])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -86,7 +102,10 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
   const handleEventClick = (info: EventClickArg) => {
     if (info.event.extendedProps.type === 'reserva') {
       const reserva = info.event.extendedProps.reserva as ReservaConArticulo
-      setPopover({ x: info.jsEvent.pageX, y: info.jsEvent.pageY, reserva })
+      const popoverWidth = 256
+      const x = Math.max(8, Math.min(info.jsEvent.pageX + 8, window.innerWidth - popoverWidth - 8))
+      const y = Math.max(8, Math.min(info.jsEvent.pageY + 8, window.innerHeight - 8))
+      setPopover({ x, y, reserva })
     }
   }
 
@@ -96,6 +115,7 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
   return (
     <div className="bg-white p-4 rounded-lg shadow-lg relative">
       <FullCalendar
+        ref={calendarRef}
         plugins={[resourceTimelinePlugin, interactionPlugin]}
         initialView="resourceTimelineMonth"
         resources={resources}
@@ -103,12 +123,13 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
         headerToolbar={{
           left: 'prev,next today',
           center: 'title',
-          right: 'resourceTimelineMonth',
+          right: '',
         }}
         resourceAreaWidth="200px"
         resourceAreaHeaderContent="Artículos"
         height="auto"
         locale={esLocale}
+        slotDuration={{ days: 1 }}
         slotLabelFormat={{ day: 'numeric' }}
         schedulerLicenseKey="CC-Attribution-NonCommercial-NoDerivatives"
         resourceLaneClassNames={() => ['fc-available-lane']}
@@ -131,7 +152,7 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
           <div className="fixed inset-0 z-40" onClick={() => setPopover(null)} />
           <div
             className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-xl p-4 w-64"
-            style={{ top: popover.y + 8, left: popover.x + 8 }}
+            style={{ top: popover.y, left: popover.x }}
           >
             <button
               onClick={() => setPopover(null)}

@@ -97,6 +97,11 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
     }
   }
 
+  const handleBackdropClick = () => {
+    if (editingId !== null && !window.confirm('¿Descartar los cambios?')) return
+    onClose()
+  }
+
   const handleCancelarReserva = async (id: string) => {
     setError(null)
     try {
@@ -111,10 +116,10 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
+      onClick={handleBackdropClick}
     >
       <div
-        className="bg-white p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+        className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
@@ -149,7 +154,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
             {reservasFiltradas.map((reserva) =>
               editingId === reserva.id ? (
                 <li key={reserva.id} className="p-3">
-                  <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                     <div>
                       <label htmlFor={`editNombre-${reserva.id}`} className="block text-xs text-gray-600">Nombre:</label>
                       <input
@@ -215,7 +220,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         className="w-full px-2 py-1 border rounded-lg text-sm"
                       />
                     </div>
-                    <div className="col-span-2">
+                    <div className="sm:col-span-2">
                       <label htmlFor={`editNotas-${reserva.id}`} className="block text-xs text-gray-600">Notas:</label>
                       <textarea
                         id={`editNotas-${reserva.id}`}
@@ -239,7 +244,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                   </button>
                 </li>
               ) : (
-                <li key={reserva.id} className="flex items-center justify-between p-3 text-sm">
+                <li key={reserva.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 text-sm">
                   <div>
                     <p className="font-medium text-gray-800">
                       {reserva.cliente_nombre} · {reserva.articulos?.nombre ?? '—'}
@@ -254,13 +259,13 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                   <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleEmpezarEdicion(reserva)}
-                      className="bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition"
+                      className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition"
                     >
                       ✏️ Editar
                     </button>
                     <button
                       onClick={() => handleCancelarReserva(reserva.id)}
-                      className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition"
+                      className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition"
                     >
                       ❌ Cancelar
                     </button>

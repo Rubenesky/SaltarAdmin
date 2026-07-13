@@ -65,6 +65,12 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
     }
   }
 
+  const handleBackdropClick = () => {
+    const sucio = nuevoInicio.trim() !== '' || nuevoFin.trim() !== '' || nuevoMotivo.trim() !== ''
+    if (sucio && !window.confirm('¿Descartar los cambios?')) return
+    onClose()
+  }
+
   const handleEliminarBloqueo = async (id: string) => {
     setError(null)
     try {
@@ -79,10 +85,10 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
+      onClick={handleBackdropClick}
     >
       <div
-        className="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+        className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {articulo.imagen_url && (
@@ -148,11 +154,14 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
                 <li className="px-3 py-2 text-gray-500 text-sm">Sin bloqueos.</li>
               ) : (
                 bloqueos.map((b) => (
-                  <li key={b.id} className="flex items-center justify-between px-3 py-2 text-sm">
+                  <li key={b.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 py-2 text-sm">
                     <span>
                       {formatFecha(b.fecha_inicio)} → {formatFecha(b.fecha_fin)} · {b.motivo}
                     </span>
-                    <button onClick={() => handleEliminarBloqueo(b.id)} className="text-red-600 hover:text-red-800">
+                    <button
+                      onClick={() => handleEliminarBloqueo(b.id)}
+                      className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition text-sm self-start sm:self-auto"
+                    >
                       Eliminar
                     </button>
                   </li>
@@ -160,7 +169,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
               )}
             </ul>
 
-            <form onSubmit={handleCrearBloqueo} className="grid grid-cols-2 gap-2 mb-4">
+            <form onSubmit={handleCrearBloqueo} className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
               <div>
                 <label htmlFor="nuevoInicio" className="block text-xs text-gray-600">Desde:</label>
                 <input
@@ -183,7 +192,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
                   className="w-full px-2 py-1 border rounded-lg text-sm"
                 />
               </div>
-              <div className="col-span-2">
+              <div className="sm:col-span-2">
                 <label htmlFor="nuevoMotivo" className="block text-xs text-gray-600">Motivo:</label>
                 <input
                   type="text"
@@ -196,7 +205,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
               </div>
               <button
                 type="submit"
-                className="col-span-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                className="sm:col-span-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
                 Añadir Bloqueo
               </button>

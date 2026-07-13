@@ -48,6 +48,12 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
 
   if (!isOpen) return null
 
+  const handleBackdropClick = () => {
+    const sucio = clienteNombre.trim() !== '' || clienteTelefono.trim() !== '' || clienteEmail.trim() !== '' || notas.trim() !== ''
+    if (sucio && !window.confirm('¿Descartar los cambios?')) return
+    onClose()
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -97,10 +103,10 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
+      onClick={handleBackdropClick}
     >
       <div
-        className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full"
+        className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-md w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
@@ -139,7 +145,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
                   ))}
                 </select>
               </div>
-              <div className="mb-4 grid grid-cols-2 gap-2">
+              <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
                   <label htmlFor="formFechaInicio" className="block text-gray-700">Desde:</label>
                   <input

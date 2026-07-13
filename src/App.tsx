@@ -15,6 +15,7 @@ type Vista = 'dashboard' | 'calendario' | 'historial'
 function App() {
   const { isSignedIn } = useAuth()
   const [vista, setVista] = useState<Vista>('dashboard')
+  const [menuAbierto, setMenuAbierto] = useState(false)
   const [modalReservaOpen, setModalReservaOpen] = useState(false)
   const [modalArticuloOpen, setModalArticuloOpen] = useState(false)
   const [modalGestionarOpen, setModalGestionarOpen] = useState(false)
@@ -56,6 +57,15 @@ function App() {
 
   const handleDataChanged = () => setRefreshKey((prev) => prev + 1)
 
+  const navButtons: { label: string; onClick: () => void; className: string }[] = [
+    { label: '🏠 Dashboard', onClick: () => setVista('dashboard'), className: 'bg-white text-gray-800 hover:bg-gray-100' },
+    { label: '📆 Calendario', onClick: () => setVista('calendario'), className: 'bg-teal-600 text-white hover:bg-teal-700' },
+    { label: '📅 Nueva Reserva', onClick: handleNuevaReservaClick, className: 'bg-green-600 text-white hover:bg-green-700' },
+    { label: '📝 Gestionar Reservas', onClick: () => setModalGestionarOpen(true), className: 'bg-indigo-600 text-white hover:bg-indigo-700' },
+    { label: '📋 Historial', onClick: () => setVista((prev) => (prev === 'historial' ? 'dashboard' : 'historial')), className: 'bg-blue-600 text-white hover:bg-blue-700' },
+    { label: '⚙️ Gestionar Artículos', onClick: () => setModalArticuloOpen(true), className: 'bg-gray-600 text-white hover:bg-gray-700' },
+  ]
+
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-gradient-to-r from-blue-700 to-orange-500 p-4 flex justify-between items-center flex-wrap gap-2">
@@ -65,51 +75,53 @@ function App() {
         >
           🗄️ SaltarAdmin
         </h1>
-        <div className="flex flex-wrap gap-2 items-center">
+        <div className="flex items-center gap-2">
           {isSignedIn ? (
             <>
+              <div className="hidden md:flex flex-wrap gap-2 items-center">
+                {navButtons.map((btn) => (
+                  <button
+                    key={btn.label}
+                    onClick={btn.onClick}
+                    className={`${btn.className} px-5 py-2.5 text-lg rounded-lg transition`}
+                  >
+                    {btn.label}
+                  </button>
+                ))}
+              </div>
               <button
-                onClick={() => setVista('dashboard')}
-                className="bg-white text-gray-800 px-5 py-2.5 text-lg rounded-lg hover:bg-gray-100 transition"
+                onClick={() => setMenuAbierto((prev) => !prev)}
+                className="md:hidden bg-white text-gray-800 px-4 py-2.5 text-lg rounded-lg hover:bg-gray-100 transition"
+                aria-label="Menú"
               >
-                🏠 Dashboard
-              </button>
-              <button
-                onClick={() => setVista('calendario')}
-                className="bg-teal-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-teal-700 transition"
-              >
-                📆 Calendario
-              </button>
-              <button
-                onClick={handleNuevaReservaClick}
-                className="bg-green-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-green-700 transition"
-              >
-                📅 Nueva Reserva
-              </button>
-              <button
-                onClick={() => setModalGestionarOpen(true)}
-                className="bg-indigo-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-indigo-700 transition"
-              >
-                📝 Gestionar Reservas
-              </button>
-              <button
-                onClick={() => setVista((prev) => (prev === 'historial' ? 'dashboard' : 'historial'))}
-                className="bg-blue-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-blue-700 transition"
-              >
-                📋 Historial
-              </button>
-              <button
-                onClick={() => setModalArticuloOpen(true)}
-                className="bg-gray-600 text-white px-5 py-2.5 text-lg rounded-lg hover:bg-gray-700 transition"
-              >
-                ⚙️ Gestionar Artículos
+                ☰
               </button>
               <UserButton />
             </>
           ) : (
-            <SignInButton mode="modal" />
+            <SignInButton mode="modal">
+              <button className="bg-white text-gray-800 px-5 py-2.5 text-lg rounded-lg hover:bg-gray-100 transition">
+                Sign in
+              </button>
+            </SignInButton>
           )}
         </div>
+        {isSignedIn && menuAbierto && (
+          <div className="md:hidden w-full flex flex-col gap-2">
+            {navButtons.map((btn) => (
+              <button
+                key={btn.label}
+                onClick={() => {
+                  btn.onClick()
+                  setMenuAbierto(false)
+                }}
+                className={`${btn.className} px-5 py-2.5 text-lg rounded-lg transition w-full text-left`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
       <main className="p-6">
         {error && (
