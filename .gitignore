@@ -4,3 +4,6 @@ dist/
 .env.local
 .env*.local
 *.tsbuildinfo
+.claude/worktrees/
+.claude/settings.local.json
+graphify-out/
