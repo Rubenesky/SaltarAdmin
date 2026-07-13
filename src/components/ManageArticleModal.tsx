@@ -76,6 +76,12 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
     }
   }
 
+  const handleBackdropClick = () => {
+    const sucio = showForm && nombre.trim() !== ''
+    if (sucio && !window.confirm('¿Descartar los cambios?')) return
+    onClose()
+  }
+
   const handleEstadoChange = async (id: string, nuevoEstado: ArticuloEstado) => {
     setError(null)
     try {
@@ -113,10 +119,10 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
   return (
     <div
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
+      onClick={handleBackdropClick}
     >
       <div
-        className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full max-h-[85vh] overflow-y-auto"
+        className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-md w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
@@ -138,7 +144,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
               <li className="px-3 py-2 text-gray-500 text-sm">Sin artículos todavía.</li>
             ) : (
               articulos.map((a) => (
-                <li key={a.id} className="flex items-center justify-between px-3 py-2">
+                <li key={a.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 py-2">
                   <div>
                     <p className="font-medium text-gray-800">{a.nombre}</p>
                     <p className="text-xs text-gray-500">{a.categoria}</p>
@@ -157,7 +163,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
                     </select>
                     <button
                       onClick={() => handleEliminarArticulo(a.id, a.nombre)}
-                      className="text-red-600 hover:text-red-800 text-sm"
+                      className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition text-sm"
                     >
                       🗑️ Eliminar
                     </button>
