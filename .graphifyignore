@@ -1,1 +1,10 @@
 .claude/skills/graphify/
+
+# Pure config/manifest files: AST-extracts as one node per JSON field, no
+# architectural signal, dilutes community structure and god-node ranking.
+tsconfig.json
+tsconfig.node.json
+postcss.config.js
+tailwind.config.js
+vite.config.ts
+package.json
