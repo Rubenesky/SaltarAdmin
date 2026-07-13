@@ -220,7 +220,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         className="w-full px-2 py-1 border rounded-lg text-sm"
                       />
                     </div>
-                    <div className="col-span-2">
+                    <div className="sm:col-span-2">
                       <label htmlFor={`editNotas-${reserva.id}`} className="block text-xs text-gray-600">Notas:</label>
                       <textarea
                         id={`editNotas-${reserva.id}`}
