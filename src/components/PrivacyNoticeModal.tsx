@@ -35,12 +35,15 @@ const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({ isOpen, onClose
             [NOMBRE DEL NEGOCIO].
           </p>
           <p>
-            Conservamos tus datos durante 12 meses desde la fecha de fin del alquiler, salvo que la ley nos
-            obligue a conservarlos más tiempo. Pasado ese plazo, los eliminamos.
+            Conservamos tus datos mientras sean necesarios para gestionar el alquiler, y los eliminamos
+            cuando dejan de serlo (orientativamente, unos 12 meses desde la fecha de fin del alquiler),
+            salvo que la ley nos obligue a conservarlos más tiempo.
           </p>
           <p>
             Puedes pedirnos en cualquier momento acceder a tus datos, corregirlos, o borrarlos por completo,
-            escribiendo a [EMAIL DE CONTACTO].
+            escribiendo a [EMAIL DE CONTACTO]. Si has hecho varias reservas con nosotros, dinos todas las que
+            recuerdes para que podamos localizar y borrar cada una — nuestro sistema guarda los datos de
+            contacto por reserva, no en una ficha única de cliente.
           </p>
           <p>
             No incluyas datos de salud u otra información sensible en el campo de notas de tu reserva.
