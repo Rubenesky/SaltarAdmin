@@ -8,16 +8,6 @@ import type {
   ReservaEstado,
 } from '../types'
 
-declare global {
-  interface Window {
-    Clerk?: {
-      session?: {
-        getToken: () => Promise<string | null>
-      }
-    }
-  }
-}
-
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
@@ -25,8 +15,19 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Faltan las variables de entorno de Supabase')
 }
 
+// ClerkSupabaseBridge (montado dentro de ClerkProvider) mantiene esta
+// referencia actualizada vía el hook useSession — el patrón recomendado
+// actualmente por Clerk. Leer window.Clerk directamente desde un módulo
+// fuera del árbol de React (el patrón de versiones antiguas de la guía)
+// no garantiza que el objeto esté poblado a tiempo para la primera petición.
+let getClerkToken: (() => Promise<string | null>) | null = null
+
+export const setClerkTokenGetter = (getter: (() => Promise<string | null>) | null) => {
+  getClerkToken = getter
+}
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  accessToken: async () => (await window.Clerk?.session?.getToken()) ?? null,
+  accessToken: async () => (await getClerkToken?.()) ?? null,
 })
 
 // Artículos
