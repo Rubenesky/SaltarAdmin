@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { createReserva, getArticulosDisponibles, hayConflictoDisponibilidad } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
+import PrivacyNoticeModal from './PrivacyNoticeModal'
 import type { Articulo } from '../types'
 
 interface ReserveModalProps {
@@ -34,6 +35,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
   const [notas, setNotas] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
+  const [modalPrivacidadOpen, setModalPrivacidadOpen] = useState(false)
 
   useEffect(() => {
     if (isOpen && !contextoFijo) {
@@ -104,10 +106,11 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
-    >
+    <>
+      <div
+        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        onClick={handleBackdropClick}
+      >
       <div
         className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-md w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
@@ -215,7 +218,22 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
               onChange={(e) => setNotas(e.target.value)}
               className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
             />
+            <p className="text-xs text-gray-500 mt-1">
+              No incluyas datos de salud u otra información sensible.
+            </p>
           </div>
+
+          <p className="text-xs text-gray-500 mb-4">
+            Al crear la reserva, tratamos estos datos según nuestra{' '}
+            <button
+              type="button"
+              onClick={() => setModalPrivacidadOpen(true)}
+              className="text-blue-600 underline hover:text-blue-800"
+            >
+              política de privacidad
+            </button>
+            .
+          </p>
           <button
             type="submit"
             disabled={saving}
@@ -233,6 +251,8 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
         </form>
       </div>
     </div>
+    <PrivacyNoticeModal isOpen={modalPrivacidadOpen} onClose={() => setModalPrivacidadOpen(false)} />
+    </>
   )
 }
 
