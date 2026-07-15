@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getReservas, updateReservaEstado } from '../lib/supabase'
+import { deleteReserva, getReservas, updateReservaEstado } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo, ReservaEstado } from '../types'
 
@@ -41,6 +41,20 @@ const ReservationHistory: React.FC = () => {
       await cargarReservas()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'No se pudo actualizar la reserva.')
+    }
+  }
+
+  const handleEliminarPermanente = async (id: string, clienteNombre: string) => {
+    setError(null)
+    const confirmado = window.confirm(
+      `Esto borrará permanentemente los datos de ${clienteNombre} para esta reserva. Esta acción no se puede deshacer. ¿Continuar?`
+    )
+    if (!confirmado) return
+    try {
+      await deleteReserva(id)
+      await cargarReservas()
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'No se pudo eliminar la reserva.')
     }
   }
 
@@ -121,6 +135,12 @@ const ReservationHistory: React.FC = () => {
                       className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition disabled:opacity-40"
                     >
                       Cancelar Reserva
+                    </button>
+                    <button
+                      onClick={() => handleEliminarPermanente(reserva.id, reserva.cliente_nombre)}
+                      className="bg-gray-800 text-white px-3 py-1 rounded-lg hover:bg-gray-900 transition ml-2"
+                    >
+                      Eliminar permanentemente
                     </button>
                   </td>
                 </tr>

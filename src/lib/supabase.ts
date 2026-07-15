@@ -136,6 +136,11 @@ export const updateReserva = async (
   if (error) throw error
 }
 
+export const deleteReserva = async (id: string): Promise<void> => {
+  const { error } = await supabase.from('reservas').delete().eq('id', id)
+  if (error) throw error
+}
+
 export const hayConflictoDisponibilidad = async (
   articuloId: string,
   fechaInicio: string,
