@@ -43,7 +43,7 @@ const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({ isOpen, onClose
             escribiendo a [EMAIL DE CONTACTO].
           </p>
           <p>
-            No inclujas datos de salud u otra información sensible en el campo de notas de tu reserva.
+            No incluyas datos de salud u otra información sensible en el campo de notas de tu reserva.
           </p>
         </div>
 
