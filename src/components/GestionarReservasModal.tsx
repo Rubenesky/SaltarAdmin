@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getReservas, hayConflictoReserva, updateReserva, updateReservaEstado } from '../lib/supabase'
+import { getReservas, hayConflictoDisponibilidad, updateReserva, updateReservaEstado } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo, ReservaEstado } from '../types'
 
@@ -74,7 +74,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
     }
 
     try {
-      const conflicto = await hayConflictoReserva(reserva.articulo_id, editInicio, editFin, reserva.id)
+      const conflicto = await hayConflictoDisponibilidad(reserva.articulo_id, editInicio, editFin, reserva.id)
       if (conflicto) {
         setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
         return

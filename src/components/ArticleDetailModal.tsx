@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { createBloqueo, deleteBloqueo, getBloqueos, getReservasPorArticulo } from '../lib/supabase'
+import { createBloqueo, deleteBloqueo, getBloqueos, getReservasPorArticulo, hayConflictoDisponibilidad } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { Articulo, Bloqueo, Reserva } from '../types'
 
@@ -43,12 +43,18 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
     e.preventDefault()
     setError(null)
 
-    if (nuevoInicio > nuevoFin) {
-      setError('La fecha de inicio no puede ser posterior a la fecha de fin.')
+    if (nuevoInicio >= nuevoFin) {
+      setError('La fecha de inicio debe ser anterior a la fecha de fin.')
       return
     }
 
     try {
+      const conflicto = await hayConflictoDisponibilidad(articulo.id, nuevoInicio, nuevoFin)
+      if (conflicto) {
+        setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
+        return
+      }
+
       await createBloqueo({
         articulo_id: articulo.id,
         fecha_inicio: nuevoInicio,
@@ -61,7 +67,12 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
       await cargarDatos()
       onBloqueosChanged()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo crear el bloqueo.')
+      const code = (err as { code?: string })?.code
+      if (code === '23P01') {
+        setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
+      } else {
+        setError(err instanceof Error ? err.message : 'No se pudo crear el bloqueo.')
+      }
     }
   }
 

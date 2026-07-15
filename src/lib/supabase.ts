@@ -136,7 +136,7 @@ export const updateReserva = async (
   if (error) throw error
 }
 
-export const hayConflictoReserva = async (
+export const hayConflictoDisponibilidad = async (
   articuloId: string,
   fechaInicio: string,
   fechaFin: string,

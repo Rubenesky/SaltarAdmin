@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { createReserva, getArticulosDisponibles, hayConflictoReserva } from '../lib/supabase'
+import { createReserva, getArticulosDisponibles, hayConflictoDisponibilidad } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { Articulo } from '../types'
 
@@ -74,7 +74,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
 
     setSaving(true)
     try {
-      const conflicto = await hayConflictoReserva(finalArticuloId, finalFechaInicio, finalFechaFin)
+      const conflicto = await hayConflictoDisponibilidad(finalArticuloId, finalFechaInicio, finalFechaFin)
       if (conflicto) {
         setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
         return
