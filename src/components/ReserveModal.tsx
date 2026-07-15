@@ -67,19 +67,17 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
       return
     }
 
-    if (finalFechaInicio > finalFechaFin) {
-      setError('La fecha de inicio no puede ser posterior a la fecha de fin.')
+    if (finalFechaInicio >= finalFechaFin) {
+      setError('La fecha de inicio debe ser anterior a la fecha de fin.')
       return
     }
 
     setSaving(true)
     try {
-      if (!contextoFijo) {
-        const conflicto = await hayConflictoReserva(finalArticuloId, finalFechaInicio, finalFechaFin)
-        if (conflicto) {
-          setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
-          return
-        }
+      const conflicto = await hayConflictoReserva(finalArticuloId, finalFechaInicio, finalFechaFin)
+      if (conflicto) {
+        setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
+        return
       }
 
       await createReserva({
@@ -94,7 +92,12 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
       onReservaCreada()
       onClose()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo crear la reserva.')
+      const code = (err as { code?: string })?.code
+      if (code === '23P01') {
+        setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
+      } else {
+        setError(err instanceof Error ? err.message : 'No se pudo crear la reserva.')
+      }
     } finally {
       setSaving(false)
     }
