@@ -143,7 +143,16 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
         eventClick={handleEventClick}
         resourceLabelDidMount={(info) => {
           info.el.style.cursor = 'pointer'
+          info.el.setAttribute('role', 'button')
+          info.el.setAttribute('tabindex', '0')
           info.el.addEventListener('click', () => onArticuloClickRef.current(info.resource.id))
+          info.el.addEventListener('keydown', (e) => {
+            const event = e as KeyboardEvent
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              onArticuloClickRef.current(info.resource.id)
+            }
+          })
         }}
       />
 

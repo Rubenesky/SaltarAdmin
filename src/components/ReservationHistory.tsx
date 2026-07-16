@@ -78,6 +78,7 @@ const ReservationHistory: React.FC = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Buscar por nombre o teléfono..."
+          aria-label="Buscar por nombre o teléfono"
           className="w-full px-3 py-2 border rounded-none focus:outline-none focus:border-primary"
         />
       </div>
@@ -119,6 +120,7 @@ const ReservationHistory: React.FC = () => {
                     <select
                       value={reserva.estado}
                       onChange={(e) => handleEstadoChange(reserva.id, e.target.value as ReservaEstado)}
+                      aria-label={`Cambiar estado de la reserva de ${reserva.cliente_nombre}`}
                       className={`px-2 py-1 rounded-none ${ESTADO_STYLES[reserva.estado]}`}
                     >
                       {ESTADOS.map((estado) => (

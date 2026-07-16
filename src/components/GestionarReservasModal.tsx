@@ -139,6 +139,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar por nombre o teléfono..."
+            aria-label="Buscar por nombre o teléfono"
             className="w-full px-3 py-2 border rounded-none focus:outline-none focus:border-primary"
           />
         </div>
