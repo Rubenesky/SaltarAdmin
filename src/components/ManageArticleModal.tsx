@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { createArticulo, deleteArticulo, getArticulos, updateArticuloEstado, uploadArticuloImagen } from '../lib/supabase'
 import { resizeImage } from '../lib/images'
 import type { Articulo, ArticuloEstado } from '../types'
+import { getErrorMessage } from '../lib/errors'
 
 interface ManageArticleModalProps {
   isOpen: boolean
@@ -36,7 +37,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
       const data = await getArticulos()
       setArticulos(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudieron cargar los artículos.')
+      setError(getErrorMessage(err, 'No se pudieron cargar los artículos.'))
     } finally {
       setLoading(false)
     }
@@ -74,7 +75,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
       await cargarArticulos()
       onArticulosChanged()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo crear el artículo.')
+      setError(getErrorMessage(err, 'No se pudo crear el artículo.'))
     }
   }
 
@@ -91,7 +92,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
       await cargarArticulos()
       onArticulosChanged()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo actualizar el estado.')
+      setError(getErrorMessage(err, 'No se pudo actualizar el estado.'))
     }
   }
 
@@ -113,7 +114,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
           'No se puede eliminar: este artículo tiene reservas o bloqueos asociados. Cámbialo a estado "baja" en su lugar, o elimina primero sus reservas/bloqueos.'
         )
       } else {
-        setError(err instanceof Error ? err.message : 'No se pudo eliminar el artículo.')
+        setError(getErrorMessage(err, 'No se pudo eliminar el artículo.'))
       }
     }
   }

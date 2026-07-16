@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getReservas, hayConflictoDisponibilidad, updateReserva, updateReservaEstado } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo, ReservaEstado } from '../types'
+import { getErrorMessage } from '../lib/errors'
 
 const ESTADOS: ReservaEstado[] = ['pendiente', 'confirmada', 'cancelada', 'completada']
 
@@ -31,7 +32,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
       const data = await getReservas()
       setReservas(data.filter((r) => r.estado !== 'cancelada'))
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudieron cargar las reservas.')
+      setError(getErrorMessage(err, 'No se pudieron cargar las reservas.'))
     } finally {
       setLoading(false)
     }
@@ -93,7 +94,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
       await cargarReservas()
       onReservasChanged()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo guardar la reserva.')
+      setError(getErrorMessage(err, 'No se pudo guardar la reserva.'))
     }
   }
 
@@ -109,7 +110,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
       await cargarReservas()
       onReservasChanged()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo cancelar la reserva.')
+      setError(getErrorMessage(err, 'No se pudo cancelar la reserva.'))
     }
   }
 

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { createBloqueo, deleteBloqueo, getBloqueos, getReservasPorArticulo, hayConflictoDisponibilidad } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { Articulo, Bloqueo, Reserva } from '../types'
+import { getErrorMessage } from '../lib/errors'
 
 interface ArticleDetailModalProps {
   isOpen: boolean
@@ -26,7 +27,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
       setReservas(r)
       setBloqueos(b)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudieron cargar los datos del artículo.')
+      setError(getErrorMessage(err, 'No se pudieron cargar los datos del artículo.'))
     } finally {
       setLoading(false)
     }
@@ -71,7 +72,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
       if (code === '23P01') {
         setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
       } else {
-        setError(err instanceof Error ? err.message : 'No se pudo crear el bloqueo.')
+        setError(getErrorMessage(err, 'No se pudo crear el bloqueo.'))
       }
     }
   }
@@ -89,7 +90,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
       await cargarDatos()
       onBloqueosChanged()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo eliminar el bloqueo.')
+      setError(getErrorMessage(err, 'No se pudo eliminar el bloqueo.'))
     }
   }
 

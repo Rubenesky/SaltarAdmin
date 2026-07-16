@@ -7,6 +7,7 @@ import ReservationHistory from './components/ReservationHistory'
 import GestionarReservasModal from './components/GestionarReservasModal'
 import { getArticulos } from './lib/supabase'
 import type { Articulo } from './types'
+import { getErrorMessage } from './lib/errors'
 
 const Calendar = React.lazy(() => import('./components/Calendar'))
 const MonthCalendarView = React.lazy(() => import('./components/MonthCalendarView'))
@@ -51,7 +52,7 @@ function App() {
       const articulo = articulos.find((a) => a.id === articuloId)
       if (articulo) setDetalleArticulo(articulo)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al cargar los detalles del artículo'
+      const message = getErrorMessage(err, 'Error al cargar los detalles del artículo')
       setError(message)
     }
   }

@@ -3,6 +3,7 @@ import { createReserva, getArticulosDisponibles, hayConflictoDisponibilidad } fr
 import { formatFecha } from '../lib/format'
 import PrivacyNoticeModal from './PrivacyNoticeModal'
 import type { Articulo } from '../types'
+import { getErrorMessage } from '../lib/errors'
 
 interface ReserveModalProps {
   isOpen: boolean
@@ -44,7 +45,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
           setArticulosDisponibles(data)
           setFormArticuloId(data[0]?.id ?? '')
         })
-        .catch((err) => setError(err instanceof Error ? err.message : 'No se pudieron cargar los artículos.'))
+        .catch((err) => setError(getErrorMessage(err, 'No se pudieron cargar los artículos.')))
     }
   }, [isOpen, contextoFijo])
 
@@ -98,7 +99,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
       if (code === '23P01') {
         setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
       } else {
-        setError(err instanceof Error ? err.message : 'No se pudo crear la reserva.')
+        setError(getErrorMessage(err, 'No se pudo crear la reserva.'))
       }
     } finally {
       setSaving(false)
