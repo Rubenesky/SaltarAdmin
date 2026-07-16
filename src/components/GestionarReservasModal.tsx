@@ -130,7 +130,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
         </div>
 
         {error && (
-          <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">{error}</p>
+          <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-none p-2">{error}</p>
         )}
 
         <div className="mb-4">
@@ -150,7 +150,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
         ) : reservasFiltradas.length === 0 ? (
           <p className="text-gray-500 text-sm">No se encontraron resultados.</p>
         ) : (
-          <ul className="divide-y divide-gray-200 border rounded-lg">
+          <ul className="divide-y divide-gray-200 border rounded-none">
             {reservasFiltradas.map((reserva) =>
               editingId === reserva.id ? (
                 <li key={reserva.id} className="p-3">
@@ -162,7 +162,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         id={`editNombre-${reserva.id}`}
                         value={editNombre}
                         onChange={(e) => setEditNombre(e.target.value)}
-                        className="w-full px-2 py-1 border rounded-lg text-sm"
+                        className="w-full px-2 py-1 border rounded-none text-sm"
                       />
                     </div>
                     <div>
@@ -172,7 +172,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         id={`editTelefono-${reserva.id}`}
                         value={editTelefono}
                         onChange={(e) => setEditTelefono(e.target.value)}
-                        className="w-full px-2 py-1 border rounded-lg text-sm"
+                        className="w-full px-2 py-1 border rounded-none text-sm"
                       />
                     </div>
                     <div>
@@ -182,7 +182,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         id={`editEmail-${reserva.id}`}
                         value={editEmail}
                         onChange={(e) => setEditEmail(e.target.value)}
-                        className="w-full px-2 py-1 border rounded-lg text-sm"
+                        className="w-full px-2 py-1 border rounded-none text-sm"
                       />
                     </div>
                     <div>
@@ -191,7 +191,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         id={`editEstado-${reserva.id}`}
                         value={editEstado}
                         onChange={(e) => setEditEstado(e.target.value as ReservaEstado)}
-                        className="w-full px-2 py-1 border rounded-lg text-sm"
+                        className="w-full px-2 py-1 border rounded-none text-sm"
                       >
                         {ESTADOS.map((estadoOption) => (
                           <option key={estadoOption} value={estadoOption}>
@@ -207,7 +207,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         id={`editInicio-${reserva.id}`}
                         value={editInicio}
                         onChange={(e) => setEditInicio(e.target.value)}
-                        className="w-full px-2 py-1 border rounded-lg text-sm"
+                        className="w-full px-2 py-1 border rounded-none text-sm"
                       />
                     </div>
                     <div>
@@ -217,7 +217,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         id={`editFin-${reserva.id}`}
                         value={editFin}
                         onChange={(e) => setEditFin(e.target.value)}
-                        className="w-full px-2 py-1 border rounded-lg text-sm"
+                        className="w-full px-2 py-1 border rounded-none text-sm"
                       />
                     </div>
                     <div className="sm:col-span-2">
@@ -226,7 +226,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                         id={`editNotas-${reserva.id}`}
                         value={editNotas}
                         onChange={(e) => setEditNotas(e.target.value)}
-                        className="w-full px-2 py-1 border rounded-lg text-sm"
+                        className="w-full px-2 py-1 border rounded-none text-sm"
                       />
                     </div>
                   </div>

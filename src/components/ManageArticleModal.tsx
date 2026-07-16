@@ -133,13 +133,13 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
         </div>
 
         {error && (
-          <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">{error}</p>
+          <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-none p-2">{error}</p>
         )}
 
         {loading ? (
           <p className="text-gray-500 text-sm mb-4">Cargando...</p>
         ) : (
-          <ul className="mb-4 divide-y divide-gray-200 border rounded-lg">
+          <ul className="mb-4 divide-y divide-gray-200 border rounded-none">
             {articulos.length === 0 ? (
               <li className="px-3 py-2 text-gray-500 text-sm">Sin artículos todavía.</li>
             ) : (

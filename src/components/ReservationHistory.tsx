@@ -70,7 +70,7 @@ const ReservationHistory: React.FC = () => {
     <div className="bg-white p-4 rounded-none border border-gray-200">
       <h2 className="font-heading text-2xl font-bold mb-4 text-gray-900">📋 Historial de Reservas</h2>
       {error && (
-        <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">{error}</p>
+        <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-none p-2">{error}</p>
       )}
       <div className="mb-4">
         <input

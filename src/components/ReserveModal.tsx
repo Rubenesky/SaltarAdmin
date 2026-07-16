@@ -129,7 +129,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
         )}
 
         {error && (
-          <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">{error}</p>
+          <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-none p-2">{error}</p>
         )}
 
         <form onSubmit={handleSubmit}>

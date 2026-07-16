@@ -31,7 +31,7 @@ const DayReservationsModal: React.FC<DayReservationsModalProps> = ({ isOpen, onC
         {reservas.length === 0 ? (
           <p className="text-gray-500 text-sm mb-4">No hay reservas este día.</p>
         ) : (
-          <ul className="mb-4 divide-y divide-gray-200 border rounded-lg">
+          <ul className="mb-4 divide-y divide-gray-200 border rounded-none">
             {reservas.map((r) => (
               <li key={r.id} className="p-3 text-sm">
                 <p className="font-medium text-gray-800">
