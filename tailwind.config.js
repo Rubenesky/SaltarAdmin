@@ -3,13 +3,15 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['Source Sans 3', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        heading: ['Lexend', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       colors: {
-        primary: '#1a56db',
-        accent: '#ed8936',
+        primary: '#0F766E',
+        accent: '#0369A1',
         success: '#16a34a',
         danger: '#dc2626',
+        warning: '#d97706',
         'light-gray': '#f3f4f6',
       },
     },
