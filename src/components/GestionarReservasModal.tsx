@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Modal from 'react-modal'
 import { getReservas, hayConflictoDisponibilidad, updateReserva, updateReservaEstado } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo, ReservaEstado } from '../types'
@@ -41,8 +42,6 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
   useEffect(() => {
     if (isOpen) cargarReservas()
   }, [isOpen])
-
-  if (!isOpen) return null
 
   const reservasFiltradas = reservas.filter((r) => {
     const term = searchTerm.trim().toLowerCase()
@@ -115,14 +114,13 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={handleBackdropClick}
+      ariaHideApp={false}
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-2xl w-full max-h-[85vh] overflow-y-auto outline-none"
     >
-      <div
-        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading text-2xl font-bold text-gray-900">📝 Gestionar Reservas</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
@@ -284,8 +282,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
         >
           Cerrar
         </button>
-      </div>
-    </div>
+    </Modal>
   )
 }
 

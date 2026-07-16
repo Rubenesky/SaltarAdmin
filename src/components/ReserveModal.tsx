@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Modal from 'react-modal'
 import { createReserva, getArticulosDisponibles, hayConflictoDisponibilidad } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import PrivacyNoticeModal from './PrivacyNoticeModal'
@@ -48,8 +49,6 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
         .catch((err) => setError(getErrorMessage(err, 'No se pudieron cargar los artículos.')))
     }
   }, [isOpen, contextoFijo])
-
-  if (!isOpen) return null
 
   const handleBackdropClick = () => {
     const sucio = clienteNombre.trim() !== '' || clienteTelefono.trim() !== '' || clienteEmail.trim() !== '' || notas.trim() !== ''
@@ -108,13 +107,12 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
 
   return (
     <>
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-        onClick={handleBackdropClick}
-      >
-      <div
-        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-md w-full max-h-[85vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+      <Modal
+        isOpen={isOpen}
+        onRequestClose={handleBackdropClick}
+        ariaHideApp={false}
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-md w-full max-h-[85vh] overflow-y-auto outline-none"
       >
         <div className="flex items-center justify-between">
           <h2 className="font-heading text-2xl font-bold mb-1 text-gray-900">📝 Crear Reserva</h2>
@@ -250,8 +248,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
             Cancelar
           </button>
         </form>
-      </div>
-    </div>
+      </Modal>
     <PrivacyNoticeModal isOpen={modalPrivacidadOpen} onClose={() => setModalPrivacidadOpen(false)} />
     </>
   )

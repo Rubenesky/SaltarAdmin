@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import Modal from 'react-modal'
 import { createArticulo, deleteArticulo, getArticulos, updateArticuloEstado, uploadArticuloImagen } from '../lib/supabase'
 import { resizeImage } from '../lib/images'
 import type { Articulo, ArticuloEstado } from '../types'
@@ -46,8 +47,6 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
   useEffect(() => {
     if (isOpen) cargarArticulos()
   }, [isOpen])
-
-  if (!isOpen) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -120,14 +119,13 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={handleBackdropClick}
+      ariaHideApp={false}
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-md w-full max-h-[85vh] overflow-y-auto outline-none"
     >
-      <div
-        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-md w-full max-h-[85vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading text-2xl font-bold text-gray-900">⚙️ Gestionar Artículos</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
@@ -258,8 +256,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
         >
           Cerrar
         </button>
-      </div>
-    </div>
+    </Modal>
   )
 }
 

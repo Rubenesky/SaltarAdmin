@@ -1,4 +1,5 @@
 import React from 'react'
+import Modal from 'react-modal'
 import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo } from '../types'
 
@@ -10,17 +11,14 @@ interface DayReservationsModalProps {
 }
 
 const DayReservationsModal: React.FC<DayReservationsModalProps> = ({ isOpen, onClose, fecha, reservas }) => {
-  if (!isOpen) return null
-
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={onClose}
+      ariaHideApp={false}
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-lg w-full max-h-[85vh] overflow-y-auto outline-none"
     >
-      <div
-        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-lg w-full max-h-[85vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading text-2xl font-bold text-gray-900">📅 {formatFecha(fecha)}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
@@ -55,8 +53,7 @@ const DayReservationsModal: React.FC<DayReservationsModalProps> = ({ isOpen, onC
         >
           Cerrar
         </button>
-      </div>
-    </div>
+    </Modal>
   )
 }
 
