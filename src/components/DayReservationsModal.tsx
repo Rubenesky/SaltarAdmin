@@ -18,11 +18,11 @@ const DayReservationsModal: React.FC<DayReservationsModalProps> = ({ isOpen, onC
       onClick={onClose}
     >
       <div
-        className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-lg w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800">📅 {formatFecha(fecha)}</h2>
+          <h2 className="font-heading text-2xl font-bold text-gray-900">📅 {formatFecha(fecha)}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
             ✕
           </button>
@@ -51,7 +51,7 @@ const DayReservationsModal: React.FC<DayReservationsModalProps> = ({ isOpen, onC
 
         <button
           onClick={onClose}
-          className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition w-full"
+          className="border border-gray-900 text-gray-900 bg-transparent px-4 py-2 rounded-none hover:bg-gray-100 transition w-full"
         >
           Cerrar
         </button>

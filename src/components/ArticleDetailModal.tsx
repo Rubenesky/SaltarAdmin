@@ -99,18 +99,18 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
       onClick={handleBackdropClick}
     >
       <div
-        className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-lg w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {articulo.imagen_url && (
           <img
             src={articulo.imagen_url}
             alt={articulo.nombre}
-            className="w-full h-48 object-cover rounded-lg mb-4"
+            className="w-full h-48 object-cover rounded-none mb-4"
           />
         )}
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold text-gray-800">{articulo.nombre}</h2>
+          <h2 className="font-heading text-2xl font-bold text-gray-900">{articulo.nombre}</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
             ✕
           </button>
@@ -127,7 +127,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
           <p className="text-gray-500 text-sm">Cargando...</p>
         ) : (
           <>
-            <h3 className="font-semibold text-gray-700 mb-2">Historial de reservas</h3>
+            <h3 className="font-heading font-semibold text-gray-900 mb-2 uppercase text-sm tracking-wide">Historial de reservas</h3>
             <div className="overflow-x-auto mb-6">
               <table className="min-w-full divide-y divide-gray-200 text-sm">
                 <thead className="bg-gray-50">
@@ -159,7 +159,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
               </table>
             </div>
 
-            <h3 className="font-semibold text-gray-700 mb-2">Bloqueos</h3>
+            <h3 className="font-heading font-semibold text-gray-900 mb-2 uppercase text-sm tracking-wide">Bloqueos</h3>
             <ul className="mb-4 divide-y divide-gray-200 border rounded-lg">
               {bloqueos.length === 0 ? (
                 <li className="px-3 py-2 text-gray-500 text-sm">Sin bloqueos.</li>
@@ -171,7 +171,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
                     </span>
                     <button
                       onClick={() => handleEliminarBloqueo(b.id)}
-                      className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition text-sm self-start sm:self-auto"
+                      className="bg-red-600 text-white px-3 py-2 rounded-none hover:bg-red-700 transition text-sm self-start sm:self-auto"
                     >
                       Eliminar
                     </button>
@@ -189,7 +189,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
                   value={nuevoInicio}
                   onChange={(e) => setNuevoInicio(e.target.value)}
                   required
-                  className="w-full px-2 py-1 border rounded-lg text-sm"
+                  className="w-full px-2 py-1 border rounded-none text-sm"
                 />
               </div>
               <div>
@@ -200,7 +200,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
                   value={nuevoFin}
                   onChange={(e) => setNuevoFin(e.target.value)}
                   required
-                  className="w-full px-2 py-1 border rounded-lg text-sm"
+                  className="w-full px-2 py-1 border rounded-none text-sm"
                 />
               </div>
               <div className="sm:col-span-2">
@@ -211,12 +211,12 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
                   value={nuevoMotivo}
                   onChange={(e) => setNuevoMotivo(e.target.value)}
                   required
-                  className="w-full px-2 py-1 border rounded-lg text-sm"
+                  className="w-full px-2 py-1 border rounded-none text-sm"
                 />
               </div>
               <button
                 type="submit"
-                className="sm:col-span-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                className="sm:col-span-2 bg-primary text-white px-4 py-2 rounded-none hover:bg-primary/90 transition"
               >
                 Añadir Bloqueo
               </button>
@@ -226,7 +226,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
 
         <button
           onClick={onClose}
-          className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition w-full"
+          className="border border-gray-900 text-gray-900 bg-transparent px-4 py-2 rounded-none hover:bg-gray-100 transition w-full"
         >
           Cerrar
         </button>
