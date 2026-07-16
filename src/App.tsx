@@ -58,19 +58,19 @@ function App() {
   const handleDataChanged = () => setRefreshKey((prev) => prev + 1)
 
   const navButtons: { label: string; onClick: () => void; className: string }[] = [
-    { label: '🏠 Dashboard', onClick: () => setVista('dashboard'), className: 'bg-white text-gray-800 hover:bg-gray-100' },
-    { label: '📆 Calendario', onClick: () => setVista('calendario'), className: 'bg-teal-600 text-white hover:bg-teal-700' },
-    { label: '📅 Nueva Reserva', onClick: handleNuevaReservaClick, className: 'bg-green-600 text-white hover:bg-green-700' },
-    { label: '📝 Gestionar Reservas', onClick: () => setModalGestionarOpen(true), className: 'bg-indigo-600 text-white hover:bg-indigo-700' },
-    { label: '📋 Historial', onClick: () => setVista((prev) => (prev === 'historial' ? 'dashboard' : 'historial')), className: 'bg-blue-600 text-white hover:bg-blue-700' },
-    { label: '⚙️ Gestionar Artículos', onClick: () => setModalArticuloOpen(true), className: 'bg-gray-600 text-white hover:bg-gray-700' },
+    { label: '🏠 Dashboard', onClick: () => setVista('dashboard'), className: 'border border-white/30 text-white hover:bg-white/10' },
+    { label: '📆 Calendario', onClick: () => setVista('calendario'), className: 'border border-white/30 text-white hover:bg-white/10' },
+    { label: '📅 Nueva Reserva', onClick: handleNuevaReservaClick, className: 'border border-white/30 text-white hover:bg-white/10' },
+    { label: '📝 Gestionar Reservas', onClick: () => setModalGestionarOpen(true), className: 'border border-white/30 text-white hover:bg-white/10' },
+    { label: '📋 Historial', onClick: () => setVista((prev) => (prev === 'historial' ? 'dashboard' : 'historial')), className: 'border border-white/30 text-white hover:bg-white/10' },
+    { label: '⚙️ Gestionar Artículos', onClick: () => setModalArticuloOpen(true), className: 'border border-white/30 text-white hover:bg-white/10' },
   ]
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <nav className="bg-gradient-to-r from-blue-700 to-orange-500 p-4 flex justify-between items-center flex-wrap gap-2">
+      <nav className="bg-gray-900 border-b-4 border-primary p-4 flex justify-between items-center flex-wrap gap-2">
         <h1
-          className="text-2xl font-bold text-white cursor-pointer"
+          className="font-heading text-2xl font-bold text-white cursor-pointer"
           onClick={() => setVista('dashboard')}
         >
           🗄️ SaltarAdmin
@@ -83,7 +83,7 @@ function App() {
                   <button
                     key={btn.label}
                     onClick={btn.onClick}
-                    className={`${btn.className} px-5 py-2.5 text-lg rounded-lg transition`}
+                    className={`${btn.className} px-5 py-2.5 text-lg rounded-none transition`}
                   >
                     {btn.label}
                   </button>
@@ -91,7 +91,7 @@ function App() {
               </div>
               <button
                 onClick={() => setMenuAbierto((prev) => !prev)}
-                className="md:hidden bg-white text-gray-800 px-4 py-2.5 text-lg rounded-lg hover:bg-gray-100 transition"
+                className="md:hidden bg-white text-gray-800 px-4 py-2.5 text-lg rounded-none hover:bg-gray-100 transition"
                 aria-label="Menú"
               >
                 ☰
@@ -100,7 +100,7 @@ function App() {
             </>
           ) : (
             <SignInButton mode="modal">
-              <button className="bg-white text-gray-800 px-5 py-2.5 text-lg rounded-lg hover:bg-gray-100 transition">
+              <button className="bg-white text-gray-800 px-5 py-2.5 text-lg rounded-none hover:bg-gray-100 transition">
                 Sign in
               </button>
             </SignInButton>
@@ -115,7 +115,7 @@ function App() {
                   btn.onClick()
                   setMenuAbierto(false)
                 }}
-                className={`${btn.className} px-5 py-2.5 text-lg rounded-lg transition w-full text-left`}
+                className={`${btn.className} px-5 py-2.5 text-lg rounded-none transition w-full text-left`}
               >
                 {btn.label}
               </button>
