@@ -71,11 +71,14 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-gray-900 border-b-4 border-primary p-4 flex justify-between items-center flex-wrap gap-2">
-        <h1
-          className="font-heading text-2xl font-bold text-white cursor-pointer"
-          onClick={() => setVista('dashboard')}
-        >
-          🗄️ SaltarAdmin
+        <h1 className="font-heading text-2xl font-bold text-white">
+          <button
+            type="button"
+            className="cursor-pointer"
+            onClick={() => setVista('dashboard')}
+          >
+            🗄️ SaltarAdmin
+          </button>
         </h1>
         <div className="flex items-center gap-2">
           {isSignedIn ? (

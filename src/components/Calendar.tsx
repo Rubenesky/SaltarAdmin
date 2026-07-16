@@ -158,7 +158,12 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
 
       {popover && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setPopover(null)} />
+          <button
+            type="button"
+            aria-label="Cerrar detalles de la reserva"
+            className="fixed inset-0 z-40 cursor-default bg-transparent border-0 p-0"
+            onClick={() => setPopover(null)}
+          />
           <div
             className="fixed z-50 bg-white border border-gray-200 rounded-none shadow-xl p-4 w-64"
             style={{ top: popover.y, left: popover.x }}
