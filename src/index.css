@@ -4,7 +4,7 @@
 
 body {
   margin: 0;
-  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  font-family: 'Source Sans 3', ui-sans-serif, system-ui, sans-serif;
 }
 
 /* Green "available" base color for each resource row in the calendar.
