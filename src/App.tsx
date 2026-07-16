@@ -125,7 +125,7 @@ function App() {
       </nav>
       <main className="p-6">
         {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded flex justify-between items-center">
+          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-none flex justify-between items-center">
             <span>{error}</span>
             <button
               onClick={() => setError('')}
