@@ -14,11 +14,11 @@ const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({ isOpen, onClose
       onClick={onClose}
     >
       <div
-        className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-lg w-full max-h-[85vh] overflow-y-auto"
+        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-lg w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800">🔒 Política de Privacidad</h2>
+          <h2 className="font-heading text-2xl font-bold text-gray-900">🔒 Política de Privacidad</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
             ✕
           </button>
@@ -52,7 +52,7 @@ const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({ isOpen, onClose
 
         <button
           onClick={onClose}
-          className="mt-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition w-full"
+          className="mt-4 border border-gray-900 text-gray-900 bg-transparent px-4 py-2 rounded-none hover:bg-gray-100 transition w-full"
         >
           Cerrar
         </button>
