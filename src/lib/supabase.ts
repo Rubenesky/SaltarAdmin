@@ -141,6 +141,9 @@ export const deleteReserva = async (id: string): Promise<void> => {
   if (error) throw error
 }
 
+// La semántica de solapamiento de intervalos [inicio, fin) que implementan
+// las llamadas .lt()/.gt() de abajo está documentada y testeada de forma
+// aislada en src/lib/disponibilidad.ts (intervalosSolapan).
 export const hayConflictoDisponibilidad = async (
   articuloId: string,
   fechaInicio: string,
