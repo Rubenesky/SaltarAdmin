@@ -119,11 +119,11 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
       onClick={handleBackdropClick}
     >
       <div
-        className="bg-white p-4 sm:p-6 rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-bold text-gray-800">📝 Gestionar Reservas</h2>
+          <h2 className="font-heading text-2xl font-bold text-gray-900">📝 Gestionar Reservas</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
             ✕
           </button>
@@ -139,7 +139,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar por nombre o teléfono..."
-            className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+            className="w-full px-3 py-2 border rounded-none focus:outline-none focus:border-primary"
           />
         </div>
 
@@ -232,13 +232,13 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                   </div>
                   <button
                     onClick={() => handleGuardarEdicion(reserva)}
-                    className="bg-green-600 text-white px-3 py-1 rounded-lg hover:bg-green-700 transition text-sm"
+                    className="bg-primary text-white px-3 py-1 rounded-none hover:bg-primary/90 transition text-sm"
                   >
                     Guardar
                   </button>
                   <button
                     onClick={handleCancelarEdicion}
-                    className="bg-gray-300 text-gray-800 px-3 py-1 rounded-lg hover:bg-gray-400 transition text-sm ml-2"
+                    className="border border-gray-900 text-gray-900 bg-transparent px-3 py-1 rounded-none hover:bg-gray-100 transition text-sm ml-2"
                   >
                     Cancelar edición
                   </button>
@@ -259,13 +259,13 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
                   <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleEmpezarEdicion(reserva)}
-                      className="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition"
+                      className="bg-primary text-white px-3 py-2 rounded-none hover:bg-primary/90 transition"
                     >
                       ✏️ Editar
                     </button>
                     <button
                       onClick={() => handleCancelarReserva(reserva.id)}
-                      className="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 transition"
+                      className="bg-red-600 text-white px-3 py-2 rounded-none hover:bg-red-700 transition"
                     >
                       ❌ Cancelar
                     </button>
@@ -278,7 +278,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
 
         <button
           onClick={onClose}
-          className="mt-4 bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition w-full"
+          className="mt-4 border border-gray-900 text-gray-900 bg-transparent px-4 py-2 rounded-none hover:bg-gray-100 transition w-full"
         >
           Cerrar
         </button>
