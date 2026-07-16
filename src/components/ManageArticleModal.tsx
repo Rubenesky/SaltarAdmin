@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { createArticulo, deleteArticulo, getArticulos, updateArticuloEstado, uploadArticuloImagen } from '../lib/supabase'
+import { resizeImage } from '../lib/images'
 import type { Articulo, ArticuloEstado } from '../types'
 
 interface ManageArticleModalProps {
@@ -62,7 +63,8 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
     }
 
     try {
-      const imagenUrl = imagenArchivo ? await uploadArticuloImagen(imagenArchivo) : null
+      const imagenRedimensionada = imagenArchivo ? await resizeImage(imagenArchivo, 1200) : null
+      const imagenUrl = imagenRedimensionada ? await uploadArticuloImagen(imagenRedimensionada) : null
       await createArticulo({ nombre, categoria, estado, imagen_url: imagenUrl })
       setNombre('')
       setCategoria(CATEGORIAS[0])
