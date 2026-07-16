@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { useAuth, SignInButton, UserButton } from '@clerk/clerk-react'
-import Calendar from './components/Calendar'
-import MonthCalendarView from './components/MonthCalendarView'
 import ManageArticleModal from './components/ManageArticleModal'
 import ArticleDetailModal from './components/ArticleDetailModal'
 import ReserveModal from './components/ReserveModal'
@@ -9,6 +7,9 @@ import ReservationHistory from './components/ReservationHistory'
 import GestionarReservasModal from './components/GestionarReservasModal'
 import { getArticulos } from './lib/supabase'
 import type { Articulo } from './types'
+
+const Calendar = React.lazy(() => import('./components/Calendar'))
+const MonthCalendarView = React.lazy(() => import('./components/MonthCalendarView'))
 
 type Vista = 'dashboard' | 'calendario' | 'historial'
 
@@ -124,6 +125,7 @@ function App() {
         )}
       </nav>
       <main className="p-6">
+        <React.Suspense fallback={<p className="text-gray-500 text-sm">Cargando...</p>}>
         {error && (
           <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-none flex justify-between items-center">
             <span>{error}</span>
@@ -146,6 +148,7 @@ function App() {
             onArticuloClick={handleArticuloClick}
           />
         )}
+        </React.Suspense>
       </main>
 
       {modalArticuloOpen && (
