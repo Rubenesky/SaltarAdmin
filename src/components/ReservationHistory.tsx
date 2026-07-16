@@ -4,10 +4,10 @@ import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo, ReservaEstado } from '../types'
 
 const ESTADO_STYLES: Record<ReservaEstado, string> = {
-  pendiente: 'bg-yellow-100 text-yellow-800',
+  pendiente: 'bg-amber-100 text-amber-800',
   confirmada: 'bg-green-100 text-green-800',
   cancelada: 'bg-red-100 text-red-800',
-  completada: 'bg-blue-100 text-blue-800',
+  completada: 'bg-teal-100 text-teal-800',
 }
 
 const ESTADOS: ReservaEstado[] = ['pendiente', 'confirmada', 'cancelada', 'completada']
@@ -67,8 +67,8 @@ const ReservationHistory: React.FC = () => {
   if (loading) return <div className="p-4 text-center text-gray-600">Cargando historial...</div>
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">📋 Historial de Reservas</h2>
+    <div className="bg-white p-4 rounded-none border border-gray-200">
+      <h2 className="font-heading text-2xl font-bold mb-4 text-gray-900">📋 Historial de Reservas</h2>
       {error && (
         <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">{error}</p>
       )}
@@ -78,7 +78,7 @@ const ReservationHistory: React.FC = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Buscar por nombre o teléfono..."
-          className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
+          className="w-full px-3 py-2 border rounded-none focus:outline-none focus:border-primary"
         />
       </div>
       <div className="overflow-x-auto">
@@ -119,7 +119,7 @@ const ReservationHistory: React.FC = () => {
                     <select
                       value={reserva.estado}
                       onChange={(e) => handleEstadoChange(reserva.id, e.target.value as ReservaEstado)}
-                      className={`px-2 py-1 rounded ${ESTADO_STYLES[reserva.estado]}`}
+                      className={`px-2 py-1 rounded-none ${ESTADO_STYLES[reserva.estado]}`}
                     >
                       {ESTADOS.map((estado) => (
                         <option key={estado} value={estado}>
@@ -132,13 +132,13 @@ const ReservationHistory: React.FC = () => {
                     <button
                       onClick={() => handleEstadoChange(reserva.id, 'cancelada')}
                       disabled={reserva.estado === 'cancelada'}
-                      className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition disabled:opacity-40"
+                      className="bg-red-600 text-white px-3 py-1 rounded-none hover:bg-red-700 transition disabled:opacity-40"
                     >
                       Cancelar Reserva
                     </button>
                     <button
                       onClick={() => handleEliminarPermanente(reserva.id, reserva.cliente_nombre)}
-                      className="bg-gray-800 text-white px-3 py-1 rounded-lg hover:bg-gray-900 transition ml-2"
+                      className="bg-gray-800 text-white px-3 py-1 rounded-none hover:bg-gray-900 transition ml-2"
                     >
                       Eliminar permanentemente
                     </button>

@@ -55,7 +55,7 @@ const MonthCalendarView: React.FC = () => {
   if (loading) return <div className="p-4 text-center text-gray-600">Cargando calendario...</div>
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-lg relative">
+    <div className="bg-white p-4 rounded-none border border-gray-200 relative">
       {error && (
         <p className="mb-4 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg p-2">{error}</p>
       )}

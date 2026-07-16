@@ -113,7 +113,7 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
   if (articulos.length === 0) return <div className="p-4 text-center text-gray-500">No hay artículos disponibles.</div>
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-lg relative">
+    <div className="bg-white p-4 rounded-none border border-gray-200 relative">
       <FullCalendar
         ref={calendarRef}
         plugins={[resourceTimelinePlugin, interactionPlugin]}
@@ -151,7 +151,7 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
         <>
           <div className="fixed inset-0 z-40" onClick={() => setPopover(null)} />
           <div
-            className="fixed z-50 bg-white border border-gray-200 rounded-lg shadow-xl p-4 w-64"
+            className="fixed z-50 bg-white border border-gray-200 rounded-none shadow-xl p-4 w-64"
             style={{ top: popover.y, left: popover.x }}
           >
             <button
@@ -161,7 +161,7 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
             >
               ✕
             </button>
-            <h3 className="font-bold text-gray-800 mb-2">{popover.reserva.cliente_nombre}</h3>
+            <h3 className="font-heading font-bold text-gray-900 mb-2">{popover.reserva.cliente_nombre}</h3>
             <p className="text-sm text-gray-600">📞 {popover.reserva.cliente_telefono}</p>
             {popover.reserva.cliente_email && (
               <p className="text-sm text-gray-600">✉️ {popover.reserva.cliente_email}</p>
