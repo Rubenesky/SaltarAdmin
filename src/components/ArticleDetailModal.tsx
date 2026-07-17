@@ -106,7 +106,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
           <img
             src={articulo.imagen_url}
             alt={articulo.nombre}
-            className="w-full h-48 object-cover rounded-none mb-4"
+            className="w-full h-48 object-contain bg-gray-100 rounded-none mb-4"
           />
         )}
         <div className="flex items-center justify-between">
