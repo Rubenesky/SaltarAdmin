@@ -1,0 +1,21 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - navigation [ref=e4]:
+      - heading "🗄️ SaltarAdmin" [level=1] [ref=e5] [cursor=pointer]
+      - generic [ref=e7]:
+        - button "🏠 Dashboard" [ref=e8] [cursor=pointer]
+        - button "📆 Calendario" [ref=e9] [cursor=pointer]
+        - button "📅 Nueva Reserva" [ref=e10] [cursor=pointer]
+        - button "📝 Gestionar Reservas" [ref=e11] [cursor=pointer]
+        - button "📋 Historial" [ref=e12] [cursor=pointer]
+        - button "⚙️ Gestionar Artículos" [ref=e13] [cursor=pointer]
+    - main [ref=e14]:
+      - generic [ref=e16]: No hay artículos disponibles.
+  - dialog [active] [ref=e18]:
+    - generic [ref=e19]:
+      - heading "⚙️ Gestionar Artículos" [level=2] [ref=e20]
+      - button "Cerrar" [ref=e21] [cursor=pointer]: ✕
+    - list [ref=e22]:
+      - listitem [ref=e23]: Sin artículos todavía.
+    - button "➕ Nuevo Artículo" [ref=e24] [cursor=pointer]
+    - button "Cerrar" [ref=e25] [cursor=pointer]

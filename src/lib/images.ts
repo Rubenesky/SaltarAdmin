@@ -1,4 +1,11 @@
 export const resizeImage = (file: File, maxDimension: number): Promise<File> => {
+  // GIFs skip resizing: canvas.toBlob() doesn't support re-encoding to
+  // image/gif (browsers silently produce PNG bytes instead), and resizing
+  // would also flatten any animation to a single frame.
+  if (file.type === 'image/gif') {
+    return Promise.resolve(file)
+  }
+
   return new Promise((resolve, reject) => {
     const img = new Image()
     const objectUrl = URL.createObjectURL(file)
