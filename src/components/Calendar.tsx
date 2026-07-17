@@ -143,13 +143,27 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
         eventClick={handleEventClick}
         resourceLabelDidMount={(info) => {
           info.el.style.cursor = 'pointer'
+          info.el.setAttribute('role', 'button')
+          info.el.setAttribute('tabindex', '0')
           info.el.addEventListener('click', () => onArticuloClickRef.current(info.resource.id))
+          info.el.addEventListener('keydown', (e) => {
+            const event = e as KeyboardEvent
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              onArticuloClickRef.current(info.resource.id)
+            }
+          })
         }}
       />
 
       {popover && (
         <>
-          <div className="fixed inset-0 z-40" onClick={() => setPopover(null)} />
+          <button
+            type="button"
+            aria-label="Cerrar detalles de la reserva"
+            className="fixed inset-0 z-40 cursor-default bg-transparent border-0 p-0"
+            onClick={() => setPopover(null)}
+          />
           <div
             className="fixed z-50 bg-white border border-gray-200 rounded-none shadow-xl p-4 w-64"
             style={{ top: popover.y, left: popover.x }}

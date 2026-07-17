@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { deleteReserva, getReservas, updateReservaEstado } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo, ReservaEstado } from '../types'
+import { getErrorMessage } from '../lib/errors'
 
 const ESTADO_STYLES: Record<ReservaEstado, string> = {
   pendiente: 'bg-amber-100 text-amber-800',
@@ -24,7 +25,7 @@ const ReservationHistory: React.FC = () => {
       const data = await getReservas()
       setReservas(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo cargar el historial.')
+      setError(getErrorMessage(err, 'No se pudo cargar el historial.'))
     } finally {
       setLoading(false)
     }
@@ -40,7 +41,7 @@ const ReservationHistory: React.FC = () => {
       await updateReservaEstado(id, estado)
       await cargarReservas()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo actualizar la reserva.')
+      setError(getErrorMessage(err, 'No se pudo actualizar la reserva.'))
     }
   }
 
@@ -54,7 +55,7 @@ const ReservationHistory: React.FC = () => {
       await deleteReserva(id)
       await cargarReservas()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo eliminar la reserva.')
+      setError(getErrorMessage(err, 'No se pudo eliminar la reserva.'))
     }
   }
 
@@ -78,6 +79,7 @@ const ReservationHistory: React.FC = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Buscar por nombre o teléfono..."
+          aria-label="Buscar por nombre o teléfono"
           className="w-full px-3 py-2 border rounded-none focus:outline-none focus:border-primary"
         />
       </div>
@@ -119,6 +121,7 @@ const ReservationHistory: React.FC = () => {
                     <select
                       value={reserva.estado}
                       onChange={(e) => handleEstadoChange(reserva.id, e.target.value as ReservaEstado)}
+                      aria-label={`Cambiar estado de la reserva de ${reserva.cliente_nombre}`}
                       className={`px-2 py-1 rounded-none ${ESTADO_STYLES[reserva.estado]}`}
                     >
                       {ESTADOS.map((estado) => (

@@ -7,6 +7,7 @@ import esLocale from '@fullcalendar/core/locales/es'
 import type { DayCellContentArg } from '@fullcalendar/core'
 import { getReservas } from '../lib/supabase'
 import DayReservationsModal from './DayReservationsModal'
+import { getErrorMessage } from '../lib/errors'
 import type { ReservaConArticulo } from '../types'
 
 const toDateStr = (date: Date): string => {
@@ -28,7 +29,7 @@ const MonthCalendarView: React.FC = () => {
         const data = await getReservas()
         setReservas(data)
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'No se pudieron cargar las reservas.')
+        setError(getErrorMessage(err, 'No se pudieron cargar las reservas.'))
       } finally {
         setLoading(false)
       }

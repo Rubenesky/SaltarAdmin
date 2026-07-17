@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import Modal from 'react-modal'
 import { createArticulo, deleteArticulo, getArticulos, updateArticuloEstado, uploadArticuloImagen } from '../lib/supabase'
+import { resizeImage } from '../lib/images'
 import type { Articulo, ArticuloEstado } from '../types'
+import { getErrorMessage } from '../lib/errors'
 
 interface ManageArticleModalProps {
   isOpen: boolean
@@ -35,7 +38,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
       const data = await getArticulos()
       setArticulos(data)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudieron cargar los artículos.')
+      setError(getErrorMessage(err, 'No se pudieron cargar los artículos.'))
     } finally {
       setLoading(false)
     }
@@ -44,8 +47,6 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
   useEffect(() => {
     if (isOpen) cargarArticulos()
   }, [isOpen])
-
-  if (!isOpen) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -62,7 +63,8 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
     }
 
     try {
-      const imagenUrl = imagenArchivo ? await uploadArticuloImagen(imagenArchivo) : null
+      const imagenRedimensionada = imagenArchivo ? await resizeImage(imagenArchivo, 1200) : null
+      const imagenUrl = imagenRedimensionada ? await uploadArticuloImagen(imagenRedimensionada) : null
       await createArticulo({ nombre, categoria, estado, imagen_url: imagenUrl })
       setNombre('')
       setCategoria(CATEGORIAS[0])
@@ -72,7 +74,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
       await cargarArticulos()
       onArticulosChanged()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo crear el artículo.')
+      setError(getErrorMessage(err, 'No se pudo crear el artículo.'))
     }
   }
 
@@ -89,7 +91,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
       await cargarArticulos()
       onArticulosChanged()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo actualizar el estado.')
+      setError(getErrorMessage(err, 'No se pudo actualizar el estado.'))
     }
   }
 
@@ -111,20 +113,19 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
           'No se puede eliminar: este artículo tiene reservas o bloqueos asociados. Cámbialo a estado "baja" en su lugar, o elimina primero sus reservas/bloqueos.'
         )
       } else {
-        setError(err instanceof Error ? err.message : 'No se pudo eliminar el artículo.')
+        setError(getErrorMessage(err, 'No se pudo eliminar el artículo.'))
       }
     }
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={handleBackdropClick}
+      ariaHideApp={false}
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-md w-full max-h-[85vh] overflow-y-auto outline-none"
     >
-      <div
-        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-md w-full max-h-[85vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading text-2xl font-bold text-gray-900">⚙️ Gestionar Artículos</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
@@ -255,8 +256,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
         >
           Cerrar
         </button>
-      </div>
-    </div>
+    </Modal>
   )
 }
 

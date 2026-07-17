@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
+import Modal from 'react-modal'
 import { createBloqueo, deleteBloqueo, getBloqueos, getReservasPorArticulo, hayConflictoDisponibilidad } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { Articulo, Bloqueo, Reserva } from '../types'
+import { getErrorMessage } from '../lib/errors'
 
 interface ArticleDetailModalProps {
   isOpen: boolean
@@ -26,7 +28,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
       setReservas(r)
       setBloqueos(b)
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudieron cargar los datos del artículo.')
+      setError(getErrorMessage(err, 'No se pudieron cargar los datos del artículo.'))
     } finally {
       setLoading(false)
     }
@@ -36,8 +38,6 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
     if (isOpen) cargarDatos()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, articulo.id])
-
-  if (!isOpen) return null
 
   const handleCrearBloqueo = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,7 +71,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
       if (code === '23P01') {
         setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
       } else {
-        setError(err instanceof Error ? err.message : 'No se pudo crear el bloqueo.')
+        setError(getErrorMessage(err, 'No se pudo crear el bloqueo.'))
       }
     }
   }
@@ -89,19 +89,18 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
       await cargarDatos()
       onBloqueosChanged()
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo eliminar el bloqueo.')
+      setError(getErrorMessage(err, 'No se pudo eliminar el bloqueo.'))
     }
   }
 
   return (
-    <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={handleBackdropClick}
+    <Modal
+      isOpen={isOpen}
+      onRequestClose={handleBackdropClick}
+      ariaHideApp={false}
+      overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-lg w-full max-h-[85vh] overflow-y-auto outline-none"
     >
-      <div
-        className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-lg w-full max-h-[85vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
-      >
         {articulo.imagen_url && (
           <img
             src={articulo.imagen_url}
@@ -230,8 +229,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
         >
           Cerrar
         </button>
-      </div>
-    </div>
+    </Modal>
   )
 }
 

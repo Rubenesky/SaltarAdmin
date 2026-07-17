@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { useAuth, SignInButton, UserButton } from '@clerk/clerk-react'
-import Calendar from './components/Calendar'
-import MonthCalendarView from './components/MonthCalendarView'
 import ManageArticleModal from './components/ManageArticleModal'
 import ArticleDetailModal from './components/ArticleDetailModal'
 import ReserveModal from './components/ReserveModal'
@@ -9,6 +7,10 @@ import ReservationHistory from './components/ReservationHistory'
 import GestionarReservasModal from './components/GestionarReservasModal'
 import { getArticulos } from './lib/supabase'
 import type { Articulo } from './types'
+import { getErrorMessage } from './lib/errors'
+
+const Calendar = React.lazy(() => import('./components/Calendar'))
+const MonthCalendarView = React.lazy(() => import('./components/MonthCalendarView'))
 
 type Vista = 'dashboard' | 'calendario' | 'historial'
 
@@ -50,7 +52,7 @@ function App() {
       const articulo = articulos.find((a) => a.id === articuloId)
       if (articulo) setDetalleArticulo(articulo)
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error al cargar los detalles del artículo'
+      const message = getErrorMessage(err, 'Error al cargar los detalles del artículo')
       setError(message)
     }
   }
@@ -69,11 +71,14 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-gray-900 border-b-4 border-primary p-4 flex justify-between items-center flex-wrap gap-2">
-        <h1
-          className="font-heading text-2xl font-bold text-white cursor-pointer"
-          onClick={() => setVista('dashboard')}
-        >
-          🗄️ SaltarAdmin
+        <h1 className="font-heading text-2xl font-bold text-white">
+          <button
+            type="button"
+            className="cursor-pointer"
+            onClick={() => setVista('dashboard')}
+          >
+            🗄️ SaltarAdmin
+          </button>
         </h1>
         <div className="flex items-center gap-2">
           {isSignedIn ? (
@@ -124,6 +129,7 @@ function App() {
         )}
       </nav>
       <main className="p-6">
+        <React.Suspense fallback={<p className="text-gray-500 text-sm">Cargando...</p>}>
         {error && (
           <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-none flex justify-between items-center">
             <span>{error}</span>
@@ -146,6 +152,7 @@ function App() {
             onArticuloClick={handleArticuloClick}
           />
         )}
+        </React.Suspense>
       </main>
 
       {modalArticuloOpen && (
