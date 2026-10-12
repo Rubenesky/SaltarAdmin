@@ -4,7 +4,6 @@ dist/
 .env.local
 .env*.local
 *.tsbuildinfo
-.claude/worktrees/
-.claude/settings.local.json
+.claude/
 graphify-out/
 .playwright-mcp/
