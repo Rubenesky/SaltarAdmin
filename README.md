@@ -122,6 +122,10 @@ Configurado para Vercel. `vercel.json` añade cabeceras de seguridad a todas las
 - El historial permite borrar permanentemente los datos de un cliente de una reserva concreta, para atender solicitudes de derecho al olvido.
 - Un artículo con reservas o bloqueos asociados no se puede eliminar (`on delete restrict`) — hay que pasarlo a estado `baja` para no perder el historial.
 
+## Licencia
+
+Código propietario — todos los derechos reservados. Se publica como referencia, no como software de uso libre; ver [`LICENSE`](LICENSE). Para licencias de uso comercial, contacta con el titular del copyright.
+
 ## Documentación de diseño
 
 Cada funcionalidad significativa tiene su spec y su plan de implementación en `docs/superpowers/`:
