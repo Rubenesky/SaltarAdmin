@@ -36,6 +36,17 @@ body {
   margin: 0 !important;
 }
 
+/* Cabecera de grupo de categoría en el Dashboard (resourceGroupField).
+   El fondo gris por defecto viene de una clase de tema que FullCalendar
+   aplica directamente al <th> del grupo (fc-resource-group), un elemento
+   distinto del <span> al que llega resourceGroupLabelClassNames -- por
+   eso el fondo no se puede fijar solo con esa prop y hace falta apuntar
+   aquí directamente, con !important para ganarle a la clase de tema. */
+.fc-resource-group {
+  background-color: #111827 !important;
+  color: #ffffff !important;
+}
+
 /* El locale español pone el título del mes en minúscula ("julio de 2026").
    Capitaliza solo la primera letra ("Julio de 2026"), sin afectar "de". */
 .fc-toolbar-title::first-letter {

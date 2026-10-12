@@ -4,21 +4,13 @@ import { createArticulo, deleteArticulo, getArticulos, updateArticuloEstado, upl
 import { resizeImage } from '../lib/images'
 import type { Articulo, ArticuloEstado } from '../types'
 import { getErrorMessage } from '../lib/errors'
+import { CATEGORIAS } from '../lib/categorias'
 
 interface ManageArticleModalProps {
   isOpen: boolean
   onClose: () => void
   onArticulosChanged: () => void
 }
-
-const CATEGORIAS = [
-  'colchón viscoelástico',
-  'colchón muelles',
-  'colchón látex',
-  'toro mecánico',
-  'fiesta espuma',
-  'otro',
-]
 
 const ESTADOS: ArticuloEstado[] = ['disponible', 'mantenimiento', 'baja']
 

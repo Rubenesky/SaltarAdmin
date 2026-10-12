@@ -7,6 +7,7 @@ import esLocale from '@fullcalendar/core/locales/es'
 import { getArticulosDisponibles, getBloqueos, getReservas } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { Articulo, Bloqueo, ReservaConArticulo } from '../types'
+import { CATEGORIAS } from '../lib/categorias'
 
 interface CalendarProps {
   onCeldaClick: (articuloId: string, articuloNombre: string, start: string, end: string) => void
@@ -63,7 +64,31 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
     fetchData()
   }, [])
 
-  const resources = useMemo(() => articulos.map((a) => ({ id: a.id, title: a.nombre })), [articulos])
+  const resources = useMemo(() => {
+    // Comparación normalizada (NFC + trim) en vez de indexOf directo: dos
+    // fuentes independientes del mismo texto con tilde -- este código y lo
+    // que se tecleó en el editor SQL de Supabase -- pueden diferir en la
+    // forma de codificar el acento (NFC vs NFD) aunque se vean idénticas,
+    // haciendo fallar una comparación estricta de string.
+    const normalizar = (s: string) => s.normalize('NFC').trim().toLowerCase()
+    const categoriasNormalizadas = CATEGORIAS.map(normalizar)
+
+    return articulos
+      .map((a) => {
+        const ordenCategoria = categoriasNormalizadas.indexOf(normalizar(a.categoria))
+        return {
+          id: a.id,
+          title: a.nombre,
+          categoria: a.categoria,
+          ordenCategoria: ordenCategoria === -1 ? CATEGORIAS.length : ordenCategoria,
+        }
+      })
+      // resourceGroupField no admite un orden de grupo propio: cada grupo
+      // aparece en el orden en que se encuentra su primer artículo, que seguía
+      // el orden alfabético por nombre de la query. Pre-ordenar aquí por
+      // categoría es lo que realmente fija el orden de los grupos.
+      .sort((a, b) => a.ordenCategoria - b.ordenCategoria || a.title.localeCompare(b.title, 'es'))
+  }, [articulos])
 
   const reservaEvents = useMemo(
     () =>
@@ -127,6 +152,16 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
         }}
         resourceAreaWidth="200px"
         resourceAreaHeaderContent="Artículos"
+        resourceGroupField="ordenCategoria"
+        resourceGroupLabelContent={(renderProps) => CATEGORIAS[renderProps.groupValue as number] ?? 'Otras'}
+        resourceOrder="title"
+        resourceGroupLabelClassNames={() => [
+          'font-heading',
+          'font-bold',
+          'uppercase',
+          'tracking-wide',
+          'text-sm',
+        ]}
         height="auto"
         locale={esLocale}
         slotDuration={{ days: 1 }}
