@@ -23,13 +23,13 @@ const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({ isOpen, onClose
 
         <div className="text-sm text-gray-700 space-y-3">
           <p>
-            Al hacer una reserva en [NOMBRE DEL NEGOCIO], recogemos tu nombre, teléfono, y opcionalmente tu
+            Al hacer una reserva en Saltarines, recogemos tu nombre, teléfono, y opcionalmente tu
             email y notas sobre el alquiler. Usamos estos datos únicamente para gestionar la reserva y
             contactarte para la entrega y devolución del artículo alquilado.
           </p>
           <p>
             La base legal para tratar estos datos es la ejecución del contrato de alquiler entre tú y
-            [NOMBRE DEL NEGOCIO].
+            Saltarines.
           </p>
           <p>
             Conservamos tus datos mientras sean necesarios para gestionar el alquiler, y los eliminamos
@@ -38,7 +38,7 @@ const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({ isOpen, onClose
           </p>
           <p>
             Puedes pedirnos en cualquier momento acceder a tus datos, corregirlos, o borrarlos por completo,
-            escribiendo a [EMAIL DE CONTACTO]. Si has hecho varias reservas con nosotros, dinos todas las que
+            llamando o escribiendo al 685 79 36 16. Si has hecho varias reservas con nosotros, dinos todas las que
             recuerdes para que podamos localizar y borrar cada una — nuestro sistema guarda los datos de
             contacto por reserva, no en una ficha única de cliente.
           </p>
