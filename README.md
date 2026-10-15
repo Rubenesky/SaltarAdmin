@@ -26,7 +26,7 @@ Aplicación web de gestión de reservas e inventario para un negocio de alquiler
 | Modales / iconos | `react-modal`, `lucide-react` |
 | Tests | Vitest |
 | Lint | ESLint (`typescript-eslint`, `eslint-plugin-react-hooks`, `eslint-plugin-jsx-a11y`) |
-| Despliegue | Vercel (`vercel.json` con cabeceras de seguridad / CSP) |
+| Despliegue | Cloudflare Pages (`public/_headers` con cabeceras de seguridad / CSP) |
 
 ## Estructura del proyecto
 
@@ -113,7 +113,17 @@ npm run dev
 
 ## Despliegue
 
-Configurado para Vercel. `vercel.json` añade cabeceras de seguridad a todas las rutas: una Content-Security-Policy que solo permite scripts/estilos propios y de Clerk/Google Fonts, conexiones a Supabase y Clerk, `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff` y `Referrer-Policy: strict-origin-when-cross-origin`.
+La app es 100% estática (Vite genera HTML/JS/CSS en `dist/`; Clerk y Supabase se llaman directamente desde el navegador, sin servidor propio), así que cualquier hosting de sitios estáticos sirve. Recomendado: **Cloudflare Pages** — ancho de banda y peticiones ilimitados en el plan gratis, nunca se duerme (no es un proceso que consuma "horas", se sirve desde su CDN), y permite uso comercial sin restricción en el plan free.
+
+Configuración en el dashboard de Cloudflare Pages (Workers & Pages → Create → conectar el repo de GitHub):
+
+- **Build command:** `npm run build`
+- **Build output directory:** `dist`
+- **Variables de entorno** (Settings → Environment variables, en Production y Preview): `VITE_CLERK_PUBLISHABLE_KEY`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+
+Las cabeceras de seguridad (CSP, `X-Frame-Options`, etc.) se aplican vía [`public/_headers`](public/_headers), que Vite copia a `dist/_headers` en cada build — es la convención de Cloudflare Pages (y de Netlify) para cabeceras HTTP personalizadas.
+
+También incluye `vercel.json` por si se despliega en Vercel en su lugar — mismas cabeceras, sintaxis distinta. Ten en cuenta que el plan Hobby (gratis) de Vercel prohíbe en sus términos el uso comercial; como esta app gestiona las reservas de un negocio real, Cloudflare Pages es la opción más segura a nivel de términos de servicio además de la más generosa en cuota.
 
 ## Seguridad y privacidad
 
