@@ -3,7 +3,7 @@ import Modal from 'react-modal'
 import { createBloqueo, deleteBloqueo, getBloqueos, getReservasPorArticulo, hayConflictoDisponibilidad } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { Articulo, Bloqueo, Reserva } from '../types'
-import { getErrorMessage } from '../lib/errors'
+import { getErrorCode, getErrorMessage } from '../lib/errors'
 
 interface ArticleDetailModalProps {
   isOpen: boolean
@@ -67,7 +67,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
       await cargarDatos()
       onBloqueosChanged()
     } catch (err) {
-      const code = (err as { code?: string })?.code
+      const code = getErrorCode(err)
       if (code === '23P01') {
         setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
       } else {
@@ -97,7 +97,6 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
     <Modal
       isOpen={isOpen}
       onRequestClose={handleBackdropClick}
-      ariaHideApp={false}
       overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-lg w-full max-h-[85vh] overflow-y-auto outline-none"
     >
@@ -105,12 +104,13 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
           <img
             src={articulo.imagen_url}
             alt={articulo.nombre}
+            loading="lazy"
             className="w-full h-48 object-contain bg-gray-100 rounded-none mb-4"
           />
         )}
         <div className="flex items-center justify-between">
           <h2 className="font-heading text-2xl font-bold text-gray-900">{articulo.nombre}</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
+          <button onClick={handleBackdropClick} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
             ✕
           </button>
         </div>
@@ -224,7 +224,7 @@ const ArticleDetailModal: React.FC<ArticleDetailModalProps> = ({ isOpen, onClose
         )}
 
         <button
-          onClick={onClose}
+          onClick={handleBackdropClick}
           className="border border-gray-900 text-gray-900 bg-transparent px-4 py-2 rounded-none hover:bg-gray-100 transition w-full"
         >
           Cerrar

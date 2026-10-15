@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import type { DateClickArg } from '@fullcalendar/interaction'
 import esLocale from '@fullcalendar/core/locales/es'
-import type { DayCellContentArg } from '@fullcalendar/core'
-import { getReservas } from '../lib/supabase'
+import type { DatesSetArg, DayCellContentArg } from '@fullcalendar/core'
+import { getReservasEnRango } from '../lib/supabase'
 import DayReservationsModal from './DayReservationsModal'
 import { getErrorMessage } from '../lib/errors'
 import type { ReservaConArticulo } from '../types'
@@ -23,11 +23,12 @@ const MonthCalendarView: React.FC = () => {
   const [error, setError] = useState('')
   const [fechaSeleccionada, setFechaSeleccionada] = useState<string | null>(null)
 
-  useEffect(() => {
+  const handleDatesSet = (info: DatesSetArg) => {
     const fetchData = async () => {
       try {
-        const data = await getReservas()
+        const data = await getReservasEnRango(info.startStr, info.endStr)
         setReservas(data)
+        setError('')
       } catch (err) {
         setError(getErrorMessage(err, 'No se pudieron cargar las reservas.'))
       } finally {
@@ -35,7 +36,7 @@ const MonthCalendarView: React.FC = () => {
       }
     }
     fetchData()
-  }, [])
+  }
 
   const handleDateClick = (info: DateClickArg) => {
     setFechaSeleccionada(info.dateStr)
@@ -69,6 +70,7 @@ const MonthCalendarView: React.FC = () => {
         height="auto"
         dateClick={handleDateClick}
         dayCellClassNames={handleDayCellClassNames}
+        datesSet={handleDatesSet}
       />
 
       {fechaSeleccionada && (

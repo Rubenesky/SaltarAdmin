@@ -3,7 +3,7 @@ import Modal from 'react-modal'
 import { getReservas, hayConflictoDisponibilidad, updateReserva, updateReservaEstado } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { ReservaConArticulo, ReservaEstado } from '../types'
-import { getErrorMessage } from '../lib/errors'
+import { getErrorCode, getErrorMessage } from '../lib/errors'
 
 const ESTADOS: ReservaEstado[] = ['pendiente', 'confirmada', 'cancelada', 'completada']
 
@@ -93,7 +93,12 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
       await cargarReservas()
       onReservasChanged()
     } catch (err) {
-      setError(getErrorMessage(err, 'No se pudo guardar la reserva.'))
+      const code = getErrorCode(err)
+      if (code === '23P01') {
+        setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
+      } else {
+        setError(getErrorMessage(err, 'No se pudo guardar la reserva.'))
+      }
     }
   }
 
@@ -117,13 +122,12 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
     <Modal
       isOpen={isOpen}
       onRequestClose={handleBackdropClick}
-      ariaHideApp={false}
       overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-2xl w-full max-h-[85vh] overflow-y-auto outline-none"
     >
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading text-2xl font-bold text-gray-900">📝 Gestionar Reservas</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
+          <button onClick={handleBackdropClick} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
             ✕
           </button>
         </div>
@@ -277,7 +281,7 @@ const GestionarReservasModal: React.FC<GestionarReservasModalProps> = ({ isOpen,
         )}
 
         <button
-          onClick={onClose}
+          onClick={handleBackdropClick}
           className="mt-4 border border-gray-900 text-gray-900 bg-transparent px-4 py-2 rounded-none hover:bg-gray-100 transition w-full"
         >
           Cerrar

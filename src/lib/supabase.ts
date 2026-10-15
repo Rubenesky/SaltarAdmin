@@ -88,6 +88,21 @@ export const getReservas = async (): Promise<ReservaConArticulo[]> => {
   return (data ?? []) as ReservaConArticulo[]
 }
 
+// Igual que getReservas pero acotada a un rango de fechas: sólo trae
+// reservas cuyo intervalo [fecha_inicio, fecha_fin) se solapa con
+// [desde, hasta). Pensada para vistas que sólo muestran un rango visible
+// (dashboard, calendario mensual) en vez de todo el histórico.
+export const getReservasEnRango = async (desde: string, hasta: string): Promise<ReservaConArticulo[]> => {
+  const { data, error } = await supabase
+    .from('reservas')
+    .select('*, articulos(nombre)')
+    .lt('fecha_inicio', hasta)
+    .gt('fecha_fin', desde)
+    .order('fecha_inicio', { ascending: false })
+  if (error) throw error
+  return (data ?? []) as ReservaConArticulo[]
+}
+
 export const getReservasPorArticulo = async (articuloId: string): Promise<Reserva[]> => {
   const { data, error } = await supabase
     .from('reservas')

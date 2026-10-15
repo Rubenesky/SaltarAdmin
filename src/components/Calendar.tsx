@@ -4,14 +4,21 @@ import resourceTimelinePlugin from '@fullcalendar/resource-timeline'
 import interactionPlugin from '@fullcalendar/interaction'
 import type { EventClickArg } from '@fullcalendar/core'
 import esLocale from '@fullcalendar/core/locales/es'
-import { getArticulosDisponibles, getBloqueos, getReservas } from '../lib/supabase'
+import { getArticulosDisponibles, getBloqueos, getReservasEnRango } from '../lib/supabase'
 import { formatFecha } from '../lib/format'
 import type { Articulo, Bloqueo, ReservaConArticulo } from '../types'
 import { CATEGORIAS } from '../lib/categorias'
 
+const toDateStr = (date: Date): string => {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
 interface CalendarProps {
   onCeldaClick: (articuloId: string, articuloNombre: string, start: string, end: string) => void
-  onArticuloClick: (articuloId: string) => void
+  onArticuloClick: (articulo: Articulo) => void
 }
 
 interface ReservaPopoverState {
@@ -33,6 +40,11 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
     onArticuloClickRef.current = onArticuloClick
   }, [onArticuloClick])
 
+  const articulosRef = useRef(articulos)
+  useEffect(() => {
+    articulosRef.current = articulos
+  }, [articulos])
+
   useEffect(() => {
     const applyResponsiveView = () => {
       const api = calendarRef.current?.getApi()
@@ -51,7 +63,14 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [a, r, b] = await Promise.all([getArticulosDisponibles(), getReservas(), getBloqueos()])
+        const hoy = new Date()
+        const desde = new Date(hoy.getFullYear(), hoy.getMonth() - 3, hoy.getDate())
+        const hasta = new Date(hoy.getFullYear(), hoy.getMonth() + 6, hoy.getDate())
+        const [a, r, b] = await Promise.all([
+          getArticulosDisponibles(),
+          getReservasEnRango(toDateStr(desde), toDateStr(hasta)),
+          getBloqueos(),
+        ])
         setArticulos(a)
         setReservas(r)
         setBloqueos(b)
@@ -180,12 +199,16 @@ const Calendar: React.FC<CalendarProps> = ({ onCeldaClick, onArticuloClick }) =>
           info.el.style.cursor = 'pointer'
           info.el.setAttribute('role', 'button')
           info.el.setAttribute('tabindex', '0')
-          info.el.addEventListener('click', () => onArticuloClickRef.current(info.resource.id))
+          const clickArticulo = () => {
+            const articulo = articulosRef.current.find((a) => a.id === info.resource.id)
+            if (articulo) onArticuloClickRef.current(articulo)
+          }
+          info.el.addEventListener('click', clickArticulo)
           info.el.addEventListener('keydown', (e) => {
             const event = e as KeyboardEvent
             if (event.key === 'Enter' || event.key === ' ') {
               event.preventDefault()
-              onArticuloClickRef.current(info.resource.id)
+              clickArticulo()
             }
           })
         }}

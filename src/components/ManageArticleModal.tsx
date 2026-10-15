@@ -3,7 +3,7 @@ import Modal from 'react-modal'
 import { createArticulo, deleteArticulo, getArticulos, updateArticuloEstado, uploadArticuloImagen } from '../lib/supabase'
 import { resizeImage } from '../lib/images'
 import type { Articulo, ArticuloEstado } from '../types'
-import { getErrorMessage } from '../lib/errors'
+import { getErrorCode, getErrorMessage } from '../lib/errors'
 import { CATEGORIAS } from '../lib/categorias'
 
 interface ManageArticleModalProps {
@@ -55,7 +55,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
     }
 
     try {
-      const imagenRedimensionada = imagenArchivo ? await resizeImage(imagenArchivo, 1200) : null
+      const imagenRedimensionada = imagenArchivo ? await resizeImage(imagenArchivo, 800) : null
       const imagenUrl = imagenRedimensionada ? await uploadArticuloImagen(imagenRedimensionada) : null
       await createArticulo({ nombre, categoria, estado, imagen_url: imagenUrl })
       setNombre('')
@@ -87,9 +87,9 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
     }
   }
 
-  const handleEliminarArticulo = async (id: string, nombre: string) => {
+  const handleEliminarArticulo = async (id: string, articuloNombre: string) => {
     const confirmado = window.confirm(
-      `¿Seguro que quieres eliminar "${nombre}" permanentemente? Esta acción no se puede deshacer.`
+      `¿Seguro que quieres eliminar "${articuloNombre}" permanentemente? Esta acción no se puede deshacer.`
     )
     if (!confirmado) return
 
@@ -99,7 +99,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
       await cargarArticulos()
       onArticulosChanged()
     } catch (err) {
-      const code = (err as { code?: string })?.code
+      const code = getErrorCode(err)
       if (code === '23503') {
         setError(
           'No se puede eliminar: este artículo tiene reservas o bloqueos asociados. Cámbialo a estado "baja" en su lugar, o elimina primero sus reservas/bloqueos.'
@@ -114,13 +114,12 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
     <Modal
       isOpen={isOpen}
       onRequestClose={handleBackdropClick}
-      ariaHideApp={false}
       overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-md w-full max-h-[85vh] overflow-y-auto outline-none"
     >
         <div className="flex items-center justify-between mb-4">
           <h2 className="font-heading text-2xl font-bold text-gray-900">⚙️ Gestionar Artículos</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
+          <button onClick={handleBackdropClick} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
             ✕
           </button>
         </div>
@@ -243,7 +242,7 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
         )}
 
         <button
-          onClick={onClose}
+          onClick={handleBackdropClick}
           className="mt-4 border border-gray-900 text-gray-900 bg-transparent px-4 py-2 rounded-none hover:bg-gray-100 transition w-full"
         >
           Cerrar

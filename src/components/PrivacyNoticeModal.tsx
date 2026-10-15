@@ -11,7 +11,6 @@ const PrivacyNoticeModal: React.FC<PrivacyNoticeModalProps> = ({ isOpen, onClose
     <Modal
       isOpen={isOpen}
       onRequestClose={onClose}
-      ariaHideApp={false}
       overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-lg w-full max-h-[85vh] overflow-y-auto outline-none"
     >

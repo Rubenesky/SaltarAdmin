@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import Modal from 'react-modal'
 import { ClerkProvider } from '@clerk/clerk-react'
 import './index.css'
 import App from './App'
@@ -9,6 +10,7 @@ import ErrorBoundary from './components/ErrorBoundary'
 const clerkPubKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY
 
 const root = ReactDOM.createRoot(document.getElementById('root')!)
+Modal.setAppElement('#root')
 
 if (!clerkPubKey) {
   root.render(

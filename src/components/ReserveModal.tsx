@@ -4,7 +4,7 @@ import { createReserva, getArticulosDisponibles, hayConflictoDisponibilidad } fr
 import { formatFecha } from '../lib/format'
 import PrivacyNoticeModal from './PrivacyNoticeModal'
 import type { Articulo } from '../types'
-import { getErrorMessage } from '../lib/errors'
+import { getErrorCode, getErrorMessage } from '../lib/errors'
 
 interface ReserveModalProps {
   isOpen: boolean
@@ -94,7 +94,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
       onReservaCreada()
       onClose()
     } catch (err) {
-      const code = (err as { code?: string })?.code
+      const code = getErrorCode(err)
       if (code === '23P01') {
         setError('Ese artículo no está disponible en esas fechas (ya reservado o bloqueado).')
       } else {
@@ -110,13 +110,12 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
       <Modal
         isOpen={isOpen}
         onRequestClose={handleBackdropClick}
-        ariaHideApp={false}
         overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
         className="bg-white p-4 sm:p-6 rounded-none border-2 border-gray-900 max-w-md w-full max-h-[85vh] overflow-y-auto outline-none"
       >
         <div className="flex items-center justify-between">
           <h2 className="font-heading text-2xl font-bold mb-1 text-gray-900">📝 Crear Reserva</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
+          <button onClick={handleBackdropClick} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Cerrar">
             ✕
           </button>
         </div>
@@ -242,7 +241,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
           </button>
           <button
             type="button"
-            onClick={onClose}
+            onClick={handleBackdropClick}
             className="border border-gray-900 text-gray-900 bg-transparent px-4 py-2 rounded-none hover:bg-gray-100 transition ml-2"
           >
             Cancelar

@@ -10,3 +10,5 @@ export const getErrorMessage = (err: unknown, fallback: string): string => {
   }
   return fallback
 }
+
+export const getErrorCode = (err: unknown): string | undefined => (err as { code?: string })?.code

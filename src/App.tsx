@@ -1,21 +1,19 @@
 import React, { useState } from 'react'
-import { useAuth, SignInButton, UserButton } from '@clerk/clerk-react'
-import ManageArticleModal from './components/ManageArticleModal'
-import ArticleDetailModal from './components/ArticleDetailModal'
-import ReserveModal from './components/ReserveModal'
-import ReservationHistory from './components/ReservationHistory'
-import GestionarReservasModal from './components/GestionarReservasModal'
-import { getArticulos } from './lib/supabase'
+import { useAuth, SignedIn, SignInButton, UserButton } from '@clerk/clerk-react'
 import type { Articulo } from './types'
-import { getErrorMessage } from './lib/errors'
 
 const Calendar = React.lazy(() => import('./components/Calendar'))
 const MonthCalendarView = React.lazy(() => import('./components/MonthCalendarView'))
+const ManageArticleModal = React.lazy(() => import('./components/ManageArticleModal'))
+const ArticleDetailModal = React.lazy(() => import('./components/ArticleDetailModal'))
+const ReserveModal = React.lazy(() => import('./components/ReserveModal'))
+const ReservationHistory = React.lazy(() => import('./components/ReservationHistory'))
+const GestionarReservasModal = React.lazy(() => import('./components/GestionarReservasModal'))
 
 type Vista = 'dashboard' | 'calendario' | 'historial'
 
 function App() {
-  const { isSignedIn } = useAuth()
+  const { isSignedIn, isLoaded } = useAuth()
   const [vista, setVista] = useState<Vista>('dashboard')
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [modalReservaOpen, setModalReservaOpen] = useState(false)
@@ -46,15 +44,8 @@ function App() {
     setModalReservaOpen(true)
   }
 
-  const handleArticuloClick = async (articuloId: string) => {
-    try {
-      const articulos = await getArticulos()
-      const articulo = articulos.find((a) => a.id === articuloId)
-      if (articulo) setDetalleArticulo(articulo)
-    } catch (err) {
-      const message = getErrorMessage(err, 'Error al cargar los detalles del artículo')
-      setError(message)
-    }
+  const handleArticuloClick = (articulo: Articulo) => {
+    setDetalleArticulo(articulo)
   }
 
   const handleDataChanged = () => setRefreshKey((prev) => prev + 1)
@@ -103,12 +94,14 @@ function App() {
               </button>
               <UserButton />
             </>
-          ) : (
+          ) : isLoaded ? (
             <SignInButton mode="modal">
               <button className="bg-white text-gray-800 px-5 py-2.5 text-lg rounded-none hover:bg-gray-100 transition">
                 Sign in
               </button>
             </SignInButton>
+          ) : (
+            <div className="h-10 w-24" />
           )}
         </div>
         {isSignedIn && menuAbierto && (
@@ -129,67 +122,77 @@ function App() {
         )}
       </nav>
       <main className="p-6">
-        <React.Suspense fallback={<p className="text-gray-500 text-sm">Cargando...</p>}>
-        {error && (
-          <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-none flex justify-between items-center">
-            <span>{error}</span>
-            <button
-              onClick={() => setError('')}
-              className="text-red-700 hover:text-red-900 font-bold"
-            >
-              ✕
-            </button>
-          </div>
-        )}
-        {vista === 'historial' ? (
-          <ReservationHistory key={`historial-${refreshKey}`} />
-        ) : vista === 'calendario' ? (
-          <MonthCalendarView key={`mes-${refreshKey}`} />
-        ) : (
-          <Calendar
-            key={`calendario-${refreshKey}`}
-            onCeldaClick={handleCeldaClick}
-            onArticuloClick={handleArticuloClick}
-          />
-        )}
-        </React.Suspense>
+        <SignedIn>
+          <React.Suspense fallback={<p className="text-gray-500 text-sm">Cargando...</p>}>
+          {error && (
+            <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-none flex justify-between items-center">
+              <span>{error}</span>
+              <button
+                onClick={() => setError('')}
+                className="text-red-700 hover:text-red-900 font-bold"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+          {vista === 'historial' ? (
+            <ReservationHistory key={`historial-${refreshKey}`} />
+          ) : vista === 'calendario' ? (
+            <MonthCalendarView key={`mes-${refreshKey}`} />
+          ) : (
+            <Calendar
+              key={`calendario-${refreshKey}`}
+              onCeldaClick={handleCeldaClick}
+              onArticuloClick={handleArticuloClick}
+            />
+          )}
+          </React.Suspense>
+        </SignedIn>
       </main>
 
       {modalArticuloOpen && (
-        <ManageArticleModal
-          isOpen={modalArticuloOpen}
-          onClose={() => setModalArticuloOpen(false)}
-          onArticulosChanged={handleDataChanged}
-        />
+        <React.Suspense fallback={null}>
+          <ManageArticleModal
+            isOpen={modalArticuloOpen}
+            onClose={() => setModalArticuloOpen(false)}
+            onArticulosChanged={handleDataChanged}
+          />
+        </React.Suspense>
       )}
 
       {modalGestionarOpen && (
-        <GestionarReservasModal
-          isOpen={modalGestionarOpen}
-          onClose={() => setModalGestionarOpen(false)}
-          onReservasChanged={handleDataChanged}
-        />
+        <React.Suspense fallback={null}>
+          <GestionarReservasModal
+            isOpen={modalGestionarOpen}
+            onClose={() => setModalGestionarOpen(false)}
+            onReservasChanged={handleDataChanged}
+          />
+        </React.Suspense>
       )}
 
       {modalReservaOpen && (
-        <ReserveModal
-          isOpen={modalReservaOpen}
-          onClose={() => setModalReservaOpen(false)}
-          articuloId={selectedArticuloId || undefined}
-          articuloNombre={selectedArticuloNombre || undefined}
-          fechaInicio={selectedStart || undefined}
-          fechaFin={selectedEnd || undefined}
-          onReservaCreada={handleDataChanged}
-        />
+        <React.Suspense fallback={null}>
+          <ReserveModal
+            isOpen={modalReservaOpen}
+            onClose={() => setModalReservaOpen(false)}
+            articuloId={selectedArticuloId || undefined}
+            articuloNombre={selectedArticuloNombre || undefined}
+            fechaInicio={selectedStart || undefined}
+            fechaFin={selectedEnd || undefined}
+            onReservaCreada={handleDataChanged}
+          />
+        </React.Suspense>
       )}
 
       {detalleArticulo && (
-        <ArticleDetailModal
-          isOpen={!!detalleArticulo}
-          onClose={() => setDetalleArticulo(null)}
-          articulo={detalleArticulo}
-          onBloqueosChanged={handleDataChanged}
-        />
+        <React.Suspense fallback={null}>
+          <ArticleDetailModal
+            isOpen={!!detalleArticulo}
+            onClose={() => setDetalleArticulo(null)}
+            articulo={detalleArticulo}
+            onBloqueosChanged={handleDataChanged}
+          />
+        </React.Suspense>
       )}
     </div>
   )
