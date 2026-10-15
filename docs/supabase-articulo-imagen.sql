@@ -11,14 +11,13 @@ create policy "Lectura pública de imágenes de artículos"
 on storage.objects for select
 using (bucket_id = 'articulo-imagenes');
 
--- Subida pública (sin RLS de por medio, igual que el resto del proyecto),
--- restringida a una lista explícita de tipos de imagen raster. El wildcard
--- 'image/%' se descartó porque también admite image/svg+xml, que puede
--- contener <script> embebido y es un vector de XSS conocido si se sirve
--- directamente desde la URL pública del bucket.
-create policy "Subida pública de imágenes de artículos"
-on storage.objects for insert
-with check (
-  bucket_id = 'articulo-imagenes'
-  and (metadata->>'mimetype') in ('image/png', 'image/jpeg', 'image/webp', 'image/gif')
-);
+-- NOTA: este archivo tenía aquí una policy de subida PÚBLICA (sin "to
+-- authenticated") para storage.objects. Se quitó porque
+-- docs/supabase-rls-policies.sql la sustituye por completo con
+-- "articulo_imagenes_subida_authenticated" (restringida a usuarios
+-- autenticados con sesión de Clerk, misma lista de mimetypes permitidos).
+-- Si este archivo se ejecuta en un entorno nuevo DESPUÉS de
+-- supabase-rls-policies.sql, mantener la policy pública aquí reintroduciría
+-- la vulnerabilidad de subida anónima que ese otro script corrige: basta con
+-- ejecutar ambos scripts (en cualquier orden) y la policy restringida de
+-- supabase-rls-policies.sql queda como la única vigente para INSERT.
