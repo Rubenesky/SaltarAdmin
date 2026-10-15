@@ -131,6 +131,7 @@ También incluye `vercel.json` por si se despliega en Vercel en su lugar — mis
 - El formulario de reserva muestra un aviso de privacidad (datos recogidos, base legal, plazo de conservación, cómo pedir el borrado) y pide explícitamente no incluir datos de salud u otra información sensible en las notas.
 - El historial permite borrar permanentemente los datos de un cliente de una reserva concreta, para atender solicitudes de derecho al olvido.
 - Un artículo con reservas o bloqueos asociados no se puede eliminar (`on delete restrict`) — hay que pasarlo a estado `baja` para no perder el historial.
+- Las políticas RLS dan acceso total a cualquier cuenta de Clerk autenticada, sin distinción de rol: es imprescindible desactivar la cuenta de Clerk de un empleado el mismo día que deja el negocio, ya que es un proceso operativo que el código no puede garantizar por sí solo.
 
 ## Licencia
 
