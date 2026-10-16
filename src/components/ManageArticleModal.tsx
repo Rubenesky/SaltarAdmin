@@ -137,9 +137,21 @@ const ManageArticleModal: React.FC<ManageArticleModalProps> = ({ isOpen, onClose
             ) : (
               articulos.map((a) => (
                 <li key={a.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 px-3 py-2">
-                  <div>
-                    <p className="font-medium text-gray-800">{a.nombre}</p>
-                    <p className="text-xs text-gray-500">{a.categoria}</p>
+                  <div className="flex items-center gap-3">
+                    {a.imagen_url ? (
+                      <img
+                        src={a.imagen_url}
+                        alt=""
+                        loading="lazy"
+                        className="w-12 h-12 object-contain bg-gray-100 border border-gray-200 rounded-none flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-gray-100 border border-gray-200 rounded-none flex-shrink-0" aria-hidden="true" />
+                    )}
+                    <div>
+                      <p className="font-medium text-gray-800">{a.nombre}</p>
+                      <p className="text-xs text-gray-500">{a.categoria}</p>
+                    </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <select

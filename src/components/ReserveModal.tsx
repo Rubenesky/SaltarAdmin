@@ -29,6 +29,7 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
 
   const [articulosDisponibles, setArticulosDisponibles] = useState<Articulo[]>([])
   const [formArticuloId, setFormArticuloId] = useState('')
+  const articuloSeleccionado = articulosDisponibles.find((a) => a.id === formArticuloId)
   const [formFechaInicio, setFormFechaInicio] = useState('')
   const [formFechaFin, setFormFechaFin] = useState('')
   const [clienteNombre, setClienteNombre] = useState('')
@@ -135,19 +136,30 @@ const ReserveModal: React.FC<ReserveModalProps> = ({
             <>
               <div className="mb-4">
                 <label htmlFor="formArticuloId" className="block text-gray-700">Artículo:</label>
-                <select
-                  id="formArticuloId"
-                  value={formArticuloId}
-                  onChange={(e) => setFormArticuloId(e.target.value)}
-                  required
-                  className="w-full px-3 py-2 border rounded-none focus:outline-none focus:border-primary"
-                >
-                  {articulosDisponibles.map((a) => (
-                    <option key={a.id} value={a.id}>
-                      {a.nombre}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex items-center gap-3">
+                  {articuloSeleccionado?.imagen_url ? (
+                    <img
+                      src={articuloSeleccionado.imagen_url}
+                      alt=""
+                      className="w-16 h-16 object-contain bg-gray-100 border border-gray-200 rounded-none flex-shrink-0"
+                    />
+                  ) : (
+                    <div className="w-16 h-16 bg-gray-100 border border-gray-200 rounded-none flex-shrink-0" aria-hidden="true" />
+                  )}
+                  <select
+                    id="formArticuloId"
+                    value={formArticuloId}
+                    onChange={(e) => setFormArticuloId(e.target.value)}
+                    required
+                    className="flex-1 px-3 py-2 border rounded-none focus:outline-none focus:border-primary"
+                  >
+                    {articulosDisponibles.map((a) => (
+                      <option key={a.id} value={a.id}>
+                        {a.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
               <div className="mb-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
